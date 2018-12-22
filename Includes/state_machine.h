@@ -61,57 +61,24 @@ public:
 	virtual void StateRemainOp()
 	{
 	}
-	virtual void StateExitOp();
+	virtual void StateExitOp()
+	{
+
+	}
+
 };
 
-class IdleState :public State
-{
-public:
-	virtual State* HandleCommand(uint8_t command);
-	virtual State* HandleInput();
-};
-
-class NormalState :public State
-{
-public:
-	virtual State* HandleCommand(uint8_t command);
-	virtual State* HandleInput();
-};
-
-class ForceSlowState :public State
-{
-public:
-	virtual State* HandleCommand(uint8_t command);
-	virtual State* HandleInput();
-};
-
-class OrdinaryCurveState :public State
-{
-public:
-	virtual State* HandleCommand(uint8_t command);
-	virtual State* HandleInput();
-};
-
-class UpslopeState :public State
-{
-public:
-	virtual State* HandleCommand(uint8_t command);
-	virtual State* HandleInput();
-};
-
-
-class DownslopeState :public State
-{
-public:
-	virtual State* HandleCommand(uint8_t command);
-	virtual State* HandleInput();
-};
 
 class TestADConverterState :public State
 {
 public:
 	virtual State* HandleCommand(uint8_t command);
-	virtual State* HandleInput();
+	virtual State* HandleInput(){}
+	virtual void StateChangeOp();  //从其它状态切换到当前状态时被状态机调用
+
+	virtual void StateRemainOp();
+	virtual void StateExitOp();
+
 };
 
 class TestUARTState :public State
@@ -121,7 +88,13 @@ public:
 	virtual State* HandleInput();
 	virtual void StateChangeOp();
 };
-
+class IdleState :public State
+{
+public:
+	virtual State* HandleCommand(uint8_t command);
+	virtual State* HandleInput();
+	virtual void StateChangeOp(){}
+};
 class StateMachine
 {
 private:

@@ -5,7 +5,6 @@
 # Add inputs and outputs from these tool invocations to the build variables 
 CPP_SRCS += \
 ../Sources/UART.cpp \
-../Sources/adc.cpp \
 ../Sources/communicate.cpp \
 ../Sources/cppmain.cpp \
 ../Sources/glb_var.cpp \
@@ -18,7 +17,6 @@ C_SRCS += \
 
 OBJS += \
 ./Sources/UART.o \
-./Sources/adc.o \
 ./Sources/communicate.o \
 ./Sources/cppmain.o \
 ./Sources/glb_var.o \
@@ -32,7 +30,6 @@ C_DEPS += \
 
 CPP_DEPS += \
 ./Sources/UART.d \
-./Sources/adc.d \
 ./Sources/communicate.d \
 ./Sources/cppmain.d \
 ./Sources/glb_var.d \
@@ -45,7 +42,7 @@ CPP_DEPS += \
 Sources/%.o: ../Sources/%.cpp
 	@echo 'Building file: $<'
 	@echo 'Invoking: Cross ARM C++ Compiler'
-	arm-none-eabi-g++ -mcpu=cortex-m0plus -mthumb -O0 -fmessage-length=0 -fsigned-char -ffunction-sections -fdata-sections  -g3 -I"../Sources" -I"../Includes" -std=gnu++11 -fabi-version=0 -MMD -MP -MF"$(@:%.o=%.d)" -MT"$@" -c -o "$@" "$<"
+	arm-none-eabi-g++ -mcpu=cortex-m0plus -mthumb -O0 -fmessage-length=0 -fsigned-char -ffunction-sections -fdata-sections  -g3 -I"../Sources" -I"H:\KDSWorkSpace\KEA128\Includes\driver" -I"../Includes" -std=gnu++11 -fabi-version=0 -MMD -MP -MF"$(@:%.o=%.d)" -MT"$@" -c -o "$@" "$<"
 	@echo 'Finished building: $<'
 	@echo ' '
 

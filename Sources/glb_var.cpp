@@ -10,4 +10,5 @@
 
 UARTCommunicator *g_uartc = nullptr;
 
+ADCModule *g_test_adc = nullptr;
 

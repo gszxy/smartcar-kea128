@@ -30,6 +30,7 @@ UARTModule::UARTModule(UART_settings::UARTn uartn, bool is_port_remap, uint16_t 
 	    	SIM->PINSEL &= ~SIM_PINSEL_UART0PS_MASK;   //RX--B0 ,TX--B1
 	    else
 	    	SIM->PINSEL |= SIM_PINSEL_UART0PS_MASK;   //PTA3 TX ,PTA2 RX
+	    //TODO:以下三行的含义是什么？为什么UART1和UART2没有？研究一下。
 	    SIM->SOPT0 &= ~SIM_SOPT0_TXDME_MASK ;
 	    SIM->SOPT0 &= ~SIM_SOPT0_RXDFE_MASK ;
 	    SIM->SOPT0 &= ~SIM_SOPT0_RXDCE_MASK ;

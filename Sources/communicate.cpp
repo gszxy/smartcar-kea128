@@ -12,7 +12,7 @@
 
 using namespace std;
 
-UARTCommunicator *cmtr_uart[3] = {nullptr,nullptr,nullptr};
+UARTCommunicator *cmtr_uart[3] = {nullptr,nullptr,nullptr};//下面的构造函数里会写入
 
 UARTCommunicator::UARTCommunicator(uint8_t rx_bufferlen,uint8_t tx_bufferlen,UART_settings::UARTn uartn,bool is_port_remap,uint16_t baud_rate)
 {
@@ -64,7 +64,7 @@ void UARTCommunicator::SendString(uint8_t *buffer,uint8_t length/*长度包括终结字
 	{
 		*(txb_tail_ptr - 1) = buffer[i];
 		++txb_tail_ptr;
-		if(txb_tail_ptr - txbuffer >= txbufferlen)//尾指针超出缓冲区末尾
+		if(txb_tail_ptr - txbuffer >= (txbufferlen + 1))//尾指针超出缓冲区末尾
 			txb_tail_ptr = txbuffer;
 		if(txb_tail_ptr == txb_head_ptr)
 			++txb_head_ptr;
@@ -86,7 +86,7 @@ uint8_t UARTCommunicator::GetChar()
 		return 0;
 	uint8_t recieve = *rxb_head_ptr;
 	++rxb_head_ptr;
-	if(rxb_head_ptr - rxbuffer >= rxbufferlen)//头指针超出缓冲区末尾
+	if(rxb_head_ptr - rxbuffer >= rxbufferlen )//头指针超出缓冲区末尾
 		rxb_head_ptr = rxbuffer;
 	return recieve;
 }
@@ -120,7 +120,7 @@ void UARTCommunicator::OnIntrRecieveNext()
 {
 	*(rxb_tail_ptr - 1) = this->uart->RecieveChar();
 	++rxb_tail_ptr;
-	if(rxb_tail_ptr - rxbuffer >= rxbufferlen)//尾指针超出缓冲区末尾
+	if(rxb_tail_ptr - rxbuffer >= (rxbufferlen + 1) )//尾指针超出缓冲区末尾
 		rxb_tail_ptr = rxbuffer;
 	if(rxb_tail_ptr == rxb_head_ptr)//缓冲区满
 		++rxb_head_ptr;

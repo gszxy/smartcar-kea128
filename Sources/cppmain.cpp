@@ -14,8 +14,11 @@ int _cppmain()
 
 	bool vehicle_has_piority_command = false;
 	//下面是模块初始化工作
-	g_uartc = new UARTCommunicator(16, 32, UART_settings::UARTR0, false, 9600);
-
+	//串口测试模块初始化（临时）
+	g_test_adc = new ADCModule(ADC_CHANNEL_AD0,ADC_8BIT);
+	//串口初始化
+	g_uartc = new UARTCommunicator(16, 32, UART_settings::UARTR0, false, 19200);
+	//状态机初始化
 	StateMachine *fsm = new StateMachine();
 	char msg[] = "startup\n";
 	g_uartc->SendString((uint8_t*)(&(msg[0])),9);
@@ -44,6 +47,7 @@ volatile void __attribute__((interrupt ("IRQ"))) UART0_IRQHandler()
 	if(cmtr_uart[0] ==nullptr)
 	{
 		uint32_t some = UARTx[0]->S1 ;
+		NVIC_EnableIRQ(UART0_IRQn);
 		return;
 	}
 
@@ -60,6 +64,7 @@ volatile void __attribute__((interrupt ("IRQ"))) UART1_IRQHandler()
 	if(cmtr_uart[1] ==nullptr)
 	{
 		uint32_t some = UARTx[1]->S1 ;
+		NVIC_EnableIRQ(UART0_IRQn);
 		return;
 	}
 
@@ -77,6 +82,7 @@ volatile void __attribute__((interrupt ("IRQ"))) UART2_IRQHandler()
 	if(cmtr_uart[2] ==nullptr)
 	{
 		uint32_t some = UARTx[2]->S1 ;
+		NVIC_EnableIRQ(UART0_IRQn);
 		return;
 	}
 

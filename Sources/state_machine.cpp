@@ -11,6 +11,7 @@
 #include <cstring>
 #include "state_machine.h"
 #include "glb_var.h"
+#include <cstdio>
 using namespace std;
 
 State* IdleState::HandleCommand(uint8_t command)
@@ -20,7 +21,8 @@ State* IdleState::HandleCommand(uint8_t command)
 	case cmd::test_uart:
 		return new TestUARTState();
 		break;
-
+	case cmd::test_adc:
+		return new TestADConverterState();
 	default:
 		return nullptr;
 	}
@@ -68,5 +70,57 @@ void StateMachine::SendCommand(uint8_t command)
 	}
 	this->current_state->StateRemainOp();
 }
+
+
+
+/*
+ * member function of ADC Conveter test state
+ */
+
+State* TestADConverterState::HandleCommand(uint8_t command)
+{
+	if(command == cmd::stop_force)//仅当命令为强制停止（0）时，程序可以退出ADC测试状态。否则将收到的数据原样发还给上位机
+		return new IdleState();
+}
+
+void TestADConverterState::StateChangeOp()
+{
+	char msg[] = "entered ADC CHANNEL 0 test mode\n";
+	g_uartc->SendString((uint8_t*)(&(msg[0])),strlen(msg) + 1);
+}
+
+void TestADConverterState::StateRemainOp()
+{
+	g_test_adc->StartCoversion(8);
+	uint32_t counter = 0;
+	uint16_t result;
+	do
+	{
+		result = g_test_adc->TryFetchResult();
+		++counter;
+	}while(result > 0xFFF);
+	size_t strl;
+	char msg[50];
+	strl = snprintf(msg,50,"Convert Finished\n result:%d",result);
+	g_uartc->SendString((uint8_t*)(&(msg[0])),strl);
+	strl = snprintf(msg,50,"\ntime consumption:%d",counter);
+	g_uartc->SendString((uint8_t*)(&(msg[0])),strl);
+
+	//注:g前缀是统一定义在glb_var.h内的全局变量
+}
+
+
+void TestADConverterState::StateExitOp()
+{
+	char msg[] = "left ADC CHANNEL 0 test mode\n";
+	g_uartc->SendString((uint8_t*)(&(msg[0])),strlen(msg) + 1);
+}
+
+
+
+
+
+
+
 
 

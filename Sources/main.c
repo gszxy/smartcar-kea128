@@ -39,6 +39,9 @@ int main(void)
 
     /* Write your code here */
 	_cppmain();
+	//IDE找不到main.c就会报错
+	//所以我们满足他。
+	//以上函数调用c++主函数。此函数永远不会返回。
     /* This for loop should be replaced. By default this loop allows a single stepping. */
     for (;;) {
         i++;
