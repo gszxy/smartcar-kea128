@@ -56,10 +56,11 @@ UARTCommunicator::~UARTCommunicator()
 	delete uart;
 }
 
-void UARTCommunicator::SendString(uint8_t *buffer,uint8_t length/*长度包括终结字符\0*/)
+void UARTCommunicator::SendString(char *buffer,uint8_t length/*长度包括终结字符\0*/)
 {
 	if(!length)
 		return;
+	DisableNVICIntr();
 	for(uint8_t i = 0; i < length; i++)
 	{
 		*(txb_tail_ptr - 1) = buffer[i];
@@ -68,26 +69,28 @@ void UARTCommunicator::SendString(uint8_t *buffer,uint8_t length/*长度包括终结字
 			txb_tail_ptr = txbuffer;
 		if(txb_tail_ptr == txb_head_ptr)
 			++txb_head_ptr;
-		//缓冲区满，覆盖掉最开始的一个字符。缓冲区最大长度仅为buffersize-1，但仍不能避免线程冲突。请勿把缓冲区装满，否则程序正确性没有保证
-		//TODO::使用信号量或中断挂起方法重新实现
+		//缓冲区满，覆盖掉最开始的一个字符。
 	}
-	if(UARTx[uart->GetChannel()]->S1 & UART_S1_TDRE_MASK)//如果发送寄存器为空
-		OnIntrSendNext();//由于不会有中断凭空发生，立即发送一个字符
+	EnableNVICIntr();
+	//开空发送寄存器中断
+	this->uart->EnableIntrOnTxRegEmpty();
 
 }
-void UARTCommunicator::SendChar(uint8_t send)
+void UARTCommunicator::SendChar(char send)
 {
 	SendString(&send,1);
 }
 
 uint8_t UARTCommunicator::GetChar()
 {
+	DisableNVICIntr();
 	if((rxb_head_ptr + 1 == rxb_tail_ptr) || ((rxb_head_ptr - rxb_tail_ptr) == (rxbufferlen - 1)))//缓冲区空
 		return 0;
 	uint8_t recieve = *rxb_head_ptr;
 	++rxb_head_ptr;
 	if(rxb_head_ptr - rxbuffer >= rxbufferlen )//头指针超出缓冲区末尾
 		rxb_head_ptr = rxbuffer;
+	EnableNVICIntr();
 	return recieve;
 }
 
@@ -104,6 +107,7 @@ void UARTCommunicator::CleanRxBuffer()
 /*..............中断处理函数，在发送缓冲区空时发送下一个字符.............*/
 void UARTCommunicator::OnIntrSendNext()
 {
+	DisableNVICIntr();
 	if((txb_head_ptr + 1 == txb_tail_ptr) || ((txb_head_ptr - txb_tail_ptr) == (txbufferlen - 1)))//缓冲区空
 	{
 		this->uart->DisableIntrOnTxRegEmpty();
@@ -113,6 +117,7 @@ void UARTCommunicator::OnIntrSendNext()
 	++txb_head_ptr;
 	if(txb_head_ptr - txbuffer >= txbufferlen)//指针超出缓冲区末尾
 		txb_head_ptr = txbuffer;
+	EnableNVICIntr();
 	this->uart->EnableIntrOnTxRegEmpty();
 }
 /*..............中断处理函数，在接收缓冲区满时读取下一个字符.............*/

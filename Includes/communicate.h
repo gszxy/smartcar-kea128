@@ -32,14 +32,43 @@ private://循环缓冲区
 	volatile uint8_t *txbuffer;
 	volatile uint8_t *txb_head_ptr;
 	volatile uint8_t *txb_tail_ptr;
-
+	inline void DisableNVICIntr()
+	{//在中断控制器出屏蔽与当前通道有关的中断
+		switch(this->uart->GetChannel())
+		{
+		case UART_settings::UARTR0:
+			NVIC_DisableIRQ(UART0_IRQn);
+		break;
+		case UART_settings::UARTR1:
+			NVIC_DisableIRQ(UART1_IRQn);
+		break;
+		case UART_settings::UARTR2:
+			NVIC_DisableIRQ(UART2_IRQn);
+		break;
+		}
+	}
+	inline void EnableNVICIntr()
+	{//在中断控制器出屏蔽与当前通道有关的中断
+		switch(this->uart->GetChannel())
+		{
+		case UART_settings::UARTR0:
+			NVIC_EnableIRQ(UART0_IRQn);
+		break;
+		case UART_settings::UARTR1:
+			NVIC_EnableIRQ(UART1_IRQn);
+		break;
+		case UART_settings::UARTR2:
+			NVIC_EnableIRQ(UART2_IRQn);
+		break;
+		}
+	}
 protected:
 	UARTModule *uart;
 public:
 	UARTCommunicator(uint8_t rx_bufferlen,uint8_t tx_bufferlen,UART_settings::UARTn uartn,bool is_port_remap,uint16_t baud_rate);
 	~UARTCommunicator();
-	void SendString(uint8_t *buffer,uint8_t length/*长度包括终结字符\0*/);
-	void SendChar(uint8_t send);
+	void SendString(char *buffer,uint8_t length/*长度包括终结字符\0*/);
+	void SendChar(char send);
 	//uint8_t* GetString();
 	//TODO: 实现GetString()
 	uint8_t GetChar();

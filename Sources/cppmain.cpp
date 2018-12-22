@@ -21,7 +21,7 @@ int _cppmain()
 	//状态机初始化
 	StateMachine *fsm = new StateMachine();
 	char msg[] = "startup\n";
-	g_uartc->SendString((uint8_t*)(&(msg[0])),9);
+	g_uartc->SendString(msg,9);
 	while(1)//程序主循环
 	{
 		/*............检查通讯区是否有相应命令到达............*/

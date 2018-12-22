@@ -43,7 +43,7 @@ State* TestUARTState::HandleInput()
 void TestUARTState::StateChangeOp()
 {
 	char msg[] = "entered UART test mode\n";
-	g_uartc->SendString((uint8_t*)(&(msg[0])),strlen(msg) + 1);
+	g_uartc->SendString(msg,strlen(msg) + 1);
 }
 State* IdleState::HandleInput()
 {
@@ -86,7 +86,7 @@ State* TestADConverterState::HandleCommand(uint8_t command)
 void TestADConverterState::StateChangeOp()
 {
 	char msg[] = "entered ADC CHANNEL 0 test mode\n";
-	g_uartc->SendString((uint8_t*)(&(msg[0])),strlen(msg) + 1);
+	g_uartc->SendString(msg,strlen(msg) + 1);
 }
 
 void TestADConverterState::StateRemainOp()
@@ -102,9 +102,9 @@ void TestADConverterState::StateRemainOp()
 	size_t strl;
 	char msg[50];
 	strl = snprintf(msg,50,"Convert Finished\n result:%d",result);
-	g_uartc->SendString((uint8_t*)(&(msg[0])),strl);
+	g_uartc->SendString(msg,strl);
 	strl = snprintf(msg,50,"\ntime consumption:%d",counter);
-	g_uartc->SendString((uint8_t*)(&(msg[0])),strl);
+	g_uartc->SendString(msg,strl);
 
 	//注:g前缀是统一定义在glb_var.h内的全局变量
 }
@@ -113,7 +113,7 @@ void TestADConverterState::StateRemainOp()
 void TestADConverterState::StateExitOp()
 {
 	char msg[] = "left ADC CHANNEL 0 test mode\n";
-	g_uartc->SendString((uint8_t*)(&(msg[0])),strlen(msg) + 1);
+	g_uartc->SendString(msg,strlen(msg) + 1);
 }
 
 
