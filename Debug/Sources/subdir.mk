@@ -13,7 +13,8 @@ CPP_SRCS += \
 ../Sources/state_machine.cpp 
 
 C_SRCS += \
-../Sources/main.c 
+../Sources/main.c \
+../Sources/sensor.c 
 
 OBJS += \
 ./Sources/UART.o \
@@ -23,10 +24,12 @@ OBJS += \
 ./Sources/gpio.o \
 ./Sources/intr.o \
 ./Sources/main.o \
+./Sources/sensor.o \
 ./Sources/state_machine.o 
 
 C_DEPS += \
-./Sources/main.d 
+./Sources/main.d \
+./Sources/sensor.d 
 
 CPP_DEPS += \
 ./Sources/UART.d \

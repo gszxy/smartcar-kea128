@@ -24,12 +24,12 @@ namespace PITsettings
 class PeriodicInterruptTimer
 {
 private:
-	Channel channel;
+	PITsettings::Channel channel;
 public:
 	PeriodicInterruptTimer(PITsettings::Channel channel);
 	inline void SetPeriod(uint32_t period_in_us)
 	{
-		PIT->CHANNEL[channel].LDVAL  = period_in_us * (BUS_CLOCK_HZ/1000000);
+		PIT->CHANNEL[channel].LDVAL  = period_in_us * (SystemCoreClock/1000000);
 	}
 	inline void EnableIntr()
 	{
@@ -38,6 +38,10 @@ public:
 	inline void DisableIntr()
 	{
 	    PIT->CHANNEL[channel].TCTRL &= ~PIT_TCTRL_TIE_MASK;
+	}
+	~PeriodicInterruptTimer()
+	{
+		this->DisableIntr();
 	}
 };
 
