@@ -180,15 +180,22 @@ public:
 	}//返回ADC通道是否已经被初始化
     static inline uint8_t GetIsConversionOngoing()
 	{
-    	return (ADC->SC2) | ADC_SC2_ADACT_MASK;
+    	return (ADC->SC2) & ADC_SC2_ADACT_MASK;
 	}
     inline void WaitUntilFinished()
     {
     	while ((ADC->SC1 & ADC_SC1_COCO_MASK ) != ADC_SC1_COCO_MASK);
     }
-
+    inline void EnableIntrOnCovertFinished()
+    {
+    	ADC->SC1 |= ADC_SC1_AIEN_MASK;
+    }
+    inline void DisableIntrOncovertFinishend()
+    {
+    	ADC->SC1 &= ~ADC_SC1_AIEN_MASK;
+    }
 	ADCModule(ADCHn channel/*ADC转换的通道*/,ADC_nbit bit/*ADC转换的位数，支持8，10，12位*/);
-    int8_t StartCoversion(int8_t count /*count的大小支持1-8*/);
+    int8_t StartConversion(uint8_t count /*count的大小支持1-8*/);
     uint16_t TryFetchResult();
     ~ADCModule();
 

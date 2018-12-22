@@ -30,10 +30,10 @@ UARTR2:PTI1 TX ,PTI0 RX
 */
 uint32_t ADCModule::chn_occupation_flag = 0;
 
-int8_t ADCModule::StartCoversion(int8_t count)
+int8_t ADCModule::StartConversion(uint8_t count)
 {//count:连续转换count次取平均值。只允许1-8范围内的值
-//	if(ADCModule::GetIsConversionOngoing())//如果存在正在进行的转换没有完成
-//		return -1;//返回错误码-1
+	if(ADCModule::GetIsConversionOngoing())//如果存在正在进行的转换没有完成
+		return -1;//返回错误码-1
 //	if(ADC->SC1 & ADC_SC1_COCO_MASK )//如果已经有完成的转换，但是没有被读取
 //		return -2;//返回错误码-2
 	this->channel_active = true;//当前通道活跃
@@ -61,7 +61,7 @@ int8_t ADCModule::StartCoversion(int8_t count)
     	ADC->SC1  = (0
     			|ADC_SC1_ADCH(this->channel)             //选择采集通道
 				// |ADC_SC1_ADCO_MASK            //连续采集
-				// |ADC_SC1_AIEN_MASK           //中断
+			    //|ADC_SC1_AIEN_MASK           //中断
     	) ;
 	}
 

@@ -8,6 +8,7 @@
 #include "glb_var.h"
 #include "communicate.h"
 
+
 UARTCommunicator *g_uartc = nullptr;
 
 ADCModule *g_test_adc = nullptr;

@@ -91,7 +91,7 @@ void TestADConverterState::StateChangeOp()
 
 void TestADConverterState::StateRemainOp()
 {
-	g_test_adc->StartCoversion(8);
+	g_test_adc->StartConversion(8);
 	uint32_t counter = 0;
 	uint16_t result;
 	do
