@@ -17,10 +17,10 @@ class PIDController
 {
 private:
 /*PID Parameters*/
-	uint32_t p;
-	uint32_t i;
-	uint32_t d;
-	uint32_t storage[10];
+	uint16_t p  ;
+	uint16_t i;
+	uint16_t d;
+	uint16_t storage[10];//记录的历史数据量
 	uint8_t index;
 public:
 	PIDController(uint32_t p,uint32_t i,uint32_t d);
@@ -30,7 +30,7 @@ public:
 	 * 输出量:一个0-10000的数，用于控制PWM波的占空比
 	 */
 	uint16_t GetControlOutput(uint32_t error);
-	void SetParameters(uint32_t p,uint32_t i,uint32_t d);
+	void SetParameters(uint16_t p = 1900,uint16_t i = 0,uint16_t d = 70);//参数单位：万分之一
 };
 
 class AngleController : private PIDController
