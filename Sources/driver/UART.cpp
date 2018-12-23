@@ -7,7 +7,7 @@ using namespace std;
 volatile UART_Type *UARTx[3] = {UART0,UART1,UART2};
 uint8_t UARTModule::chn_occupation_flag = 0x0;//静态变量初始化
 
-UARTModule::UARTModule(UART_settings::UARTn uartn, bool is_port_remap, uint16_t baud_rate,bool enable_recieve_intr ,bool enable_txreg_empty_intr)
+UARTModule::UARTModule(UART_settings::UARTn uartn, bool is_port_remap, uint32_t baud_rate,bool enable_recieve_intr ,bool enable_txreg_empty_intr)
 {
 	//TODO:检查通道是否已经被占用，并且在被占用报错
 	this->is_pin_remap = is_port_remap;

@@ -8,6 +8,7 @@
 #ifndef STATE_MACHINE_H
 #define STATE_MACHINE_H
 #include "uart.h"
+#include "glb_var.h"
 namespace cmd//避免污染全局命名空间
 {
 	enum Event  //可能导致状态机状态发生变化的一系列事件
@@ -63,7 +64,8 @@ public:
 	}
 	virtual void StateExitOp()
 	{
-
+		char msg[] = "Exit..\n";
+		g_uartc->SendString(msg,strlen(msg));
 	}
 
 };
@@ -95,6 +97,17 @@ public:
 	virtual State* HandleInput();
 	virtual void StateChangeOp(){}
 };
+
+
+class TestFTMState : public State
+{
+public:
+	virtual State* HandleCommand(uint8_t command);
+	virtual void StateChangeOp();
+};
+
+
+
 class StateMachine
 {
 private:

@@ -14,7 +14,7 @@ using namespace std;
 
 UARTCommunicator *cmtr_uart[3] = {nullptr,nullptr,nullptr};//下面的构造函数里会写入
 
-UARTCommunicator::UARTCommunicator(uint8_t rx_bufferlen,uint8_t tx_bufferlen,UART_settings::UARTn uartn,bool is_port_remap,uint16_t baud_rate)
+UARTCommunicator::UARTCommunicator(uint8_t rx_bufferlen,uint8_t tx_bufferlen,UART_settings::UARTn uartn,bool is_port_remap,uint32_t baud_rate)
 {
 	if(uartn == UART_settings::UARTR0)
 		NVIC_DisableIRQ(UART0_IRQn);// 关中断控制器IRQ中断
@@ -60,7 +60,6 @@ void UARTCommunicator::SendString(char *buffer,uint8_t length/*长度包括终�
 {
 	if(!length)
 		return;
-	DisableNVICIntr();
 	for(uint8_t i = 0; i < length; i++)
 	{
 		*(txb_tail_ptr - 1) = buffer[i];
@@ -71,7 +70,6 @@ void UARTCommunicator::SendString(char *buffer,uint8_t length/*长度包括终�
 			++txb_head_ptr;
 		//缓冲区满，覆盖掉最开始的一个字符。
 	}
-	EnableNVICIntr();
 	//开空发送寄存器中断
 	this->uart->EnableIntrOnTxRegEmpty();
 
@@ -83,14 +81,12 @@ void UARTCommunicator::SendChar(char send)
 
 uint8_t UARTCommunicator::GetChar()
 {
-	DisableNVICIntr();
 	if((rxb_head_ptr + 1 == rxb_tail_ptr) || ((rxb_head_ptr - rxb_tail_ptr) == (rxbufferlen - 1)))//缓冲区空
 		return 0;
 	uint8_t recieve = *rxb_head_ptr;
 	++rxb_head_ptr;
 	if(rxb_head_ptr - rxbuffer >= rxbufferlen )//头指针超出缓冲区末尾
 		rxb_head_ptr = rxbuffer;
-	EnableNVICIntr();
 	return recieve;
 }
 
@@ -107,7 +103,6 @@ void UARTCommunicator::CleanRxBuffer()
 /*..............中断处理函数，在发送缓冲区空时发送下一个字符.............*/
 void UARTCommunicator::OnIntrSendNext()
 {
-	DisableNVICIntr();
 	if((txb_head_ptr + 1 == txb_tail_ptr) || ((txb_head_ptr - txb_tail_ptr) == (txbufferlen - 1)))//缓冲区空
 	{
 		this->uart->DisableIntrOnTxRegEmpty();
@@ -117,7 +112,6 @@ void UARTCommunicator::OnIntrSendNext()
 	++txb_head_ptr;
 	if(txb_head_ptr - txbuffer >= txbufferlen)//指针超出缓冲区末尾
 		txb_head_ptr = txbuffer;
-	EnableNVICIntr();
 	this->uart->EnableIntrOnTxRegEmpty();
 }
 /*..............中断处理函数，在接收缓冲区满时读取下一个字符.............*/

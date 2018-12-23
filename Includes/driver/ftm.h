@@ -66,22 +66,26 @@ class FlexTimerModule
 private:
 	FTMSettings::Modules module;
 	FTMSettings::Channels channel;
+	uint16_t frequency = 2000;
+	uint16_t duty_cycle = 5000;
 /*additional channels start*/
 	//一个FTM通道的各个模块可以输出同频率不同占空比的PWM信号，因此由一些额外的channel以供单独设置各个channel
 	//此功能尚未实现
+	bool ftm_is_in_multichannel_mode = false;
 	FTMSettings::Channels *module_all_channels;
 /*private functions used in constructor begin*/
 	void PinSet(FTMSettings::Modules module,FTMSettings::Channels channel,FTMSettings::PortRemapType port_remap_type);
 
-
 /*private functions end*/
 public:
+	//构造函数1：单通道模式
 	FlexTimerModule(FTMSettings::Modules module,FTMSettings::Channels channel,FTMSettings::PortRemapType port_remap_type);
-	void SetPWMParam(uint32_t frequency,uint32_t duty_cycle/*占空比，该数除以10000为占空比(小数)*/);
+	//构造函数2：多通道模式
+
+	//
+	void SetPWMParam(uint16_t frequency,uint16_t duty_cycle/*占空比，该数除以10000为占空比(小数)*/);
 	inline void EnablePWMOutput()
 	{
-		FTMx[this->module]->CNT = 0;
-		//向计数器内写入任意值，重置为CNTIN中给定的初始值。修改0为其他数不能改变计数器初值！
 		FTMx[this->module]->SC = FTM_SC_CLKS(1)|FTM_SC_PS(2) ;
 		//FTM_SC_CLKS：向模块提供系统时钟，4分频  10MHz
 	}
@@ -89,10 +93,24 @@ public:
 	{
 		FTMx[this->module]->SC = FTM_SC_CLKS(0);
 		//不向计数器提供任何时钟，终止计数
+		FTMx[this->module]->CNT = 0;
+		//设置为输出低电平
+		//向计数器内写入任意值，重置为CNTIN中给定的初始值。修改0为其他数不能改变计数器初值！
 	}
-	~FlexTimerModule();
+	~FlexTimerModule()
+	{
 
+	}
+	inline void SetFrequency(uint16_t freq)
+	{
+		SetPWMParam(freq,this->duty_cycle);
+	}
+	inline void SetDutyCycle(uint16_t duty_cyc)
+	{
+		SetPWMParam(this->frequency,duty_cyc);
+	}
 };
 
+extern FlexTimerModule *g_steer_pwm;
 
 #endif /* INCLUDES_DRIVER_FTM_H_ */

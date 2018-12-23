@@ -42,7 +42,7 @@ public:
 		UARTx[channel]->C2 &= ~UART_C2_TIE_MASK;
 
 	}
-	UARTModule(UART_settings::UARTn uartn, bool is_port_remap, uint16_t baud_rate,bool enable_recieve_intr = false,bool enable_txreg_empty_intr=false);
+	UARTModule(UART_settings::UARTn uartn, bool is_port_remap, uint32_t baud_rate,bool enable_recieve_intr = false,bool enable_txreg_empty_intr=false);
 	~UARTModule();
 	void SendChar(uint8_t send);
 	uint8_t RecieveChar();

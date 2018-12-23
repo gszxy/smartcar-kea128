@@ -18,16 +18,13 @@ int _cppmain()
 	//串口测试模块初始化（临时）
 	g_test_adc = new ADCModule(ADC_CHANNEL_AD0,ADC_8BIT);
 	//串口初始化
-	g_uartc = new UARTCommunicator(16, 32, UART_settings::UARTR0, false, 19200);
+	g_uartc = new UARTCommunicator(64, 64, UART_settings::UARTR0, false, 19200);//RX--B0 ,TX--B1
 	//状态机初始化
 	StateMachine *fsm = new StateMachine();
 	char msg[] = "startup\n";
 	g_uartc->SendString(msg,9);
-
 	//测试PWM输出
-	FlexTimerModule *ftm_m2ch0 = new FlexTimerModule(FTMSettings::mFTM2,FTMSettings::FTM_CH0,FTMSettings::remap_first);
-	ftm_m2ch0->SetPWMParam(2000,5000);
-	ftm_m2ch0->EnablePWMOutput();
+	g_steer_pwm = new FlexTimerModule(FTMSettings::mFTM2,FTMSettings::FTM_CH0,FTMSettings::remap_first); //H0 PORT
 	//PWM输出设置结束
 	while(1)//程序主循环
 	{
@@ -50,7 +47,7 @@ int _cppmain()
 
 volatile void __attribute__((interrupt ("IRQ"))) UART0_IRQHandler()
 {
-	NVIC_DisableIRQ(UART0_IRQn);
+
 	if(cmtr_uart[0] ==nullptr)
 	{
 		uint32_t some = UARTx[0]->S1 ;
@@ -62,12 +59,12 @@ volatile void __attribute__((interrupt ("IRQ"))) UART0_IRQHandler()
 		cmtr_uart[0]->OnIntrSendNext();
 	if(UARTx[0]->S1 & UART_S1_RDRF_MASK)//如果接受寄存器为满
 		cmtr_uart[0]->OnIntrRecieveNext();
-	NVIC_EnableIRQ(UART0_IRQn);
+
 }
 
 volatile void __attribute__((interrupt ("IRQ"))) UART1_IRQHandler()
 {
-	NVIC_DisableIRQ(UART1_IRQn);
+
 	if(cmtr_uart[1] ==nullptr)
 	{
 		uint32_t some = UARTx[1]->S1 ;
@@ -80,12 +77,12 @@ volatile void __attribute__((interrupt ("IRQ"))) UART1_IRQHandler()
 		cmtr_uart[1]->OnIntrSendNext();
 	if(UARTx[1]->S1 & UART_S1_RDRF_MASK)//如果接受寄存器为满
 		cmtr_uart[1]->OnIntrRecieveNext();
-	NVIC_EnableIRQ(UART1_IRQn);
+
 }
 
 volatile void __attribute__((interrupt ("IRQ"))) UART2_IRQHandler()
 {
-	NVIC_DisableIRQ(UART2_IRQn);
+
 	if(cmtr_uart[2] ==nullptr)
 	{
 		uint32_t some = UARTx[2]->S1 ;
@@ -98,7 +95,7 @@ volatile void __attribute__((interrupt ("IRQ"))) UART2_IRQHandler()
 		cmtr_uart[2]->OnIntrSendNext();
 	if(UARTx[1]->S1 & UART_S1_RDRF_MASK)//如果接受寄存器为满
 		cmtr_uart[2]->OnIntrRecieveNext();
-	NVIC_EnableIRQ(UART1_IRQn);
+
 }
 
 

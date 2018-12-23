@@ -32,6 +32,7 @@ private://循环缓冲区
 	volatile uint8_t *txbuffer;
 	volatile uint8_t *txb_head_ptr;
 	volatile uint8_t *txb_tail_ptr;
+	/*
 	inline void DisableNVICIntr()
 	{//在中断控制器出屏蔽与当前通道有关的中断
 		switch(this->uart->GetChannel())
@@ -61,11 +62,11 @@ private://循环缓冲区
 			NVIC_EnableIRQ(UART2_IRQn);
 		break;
 		}
-	}
+	}*/
 protected:
 	UARTModule *uart;
 public:
-	UARTCommunicator(uint8_t rx_bufferlen,uint8_t tx_bufferlen,UART_settings::UARTn uartn,bool is_port_remap,uint16_t baud_rate);
+	UARTCommunicator(uint8_t rx_bufferlen,uint8_t tx_bufferlen,UART_settings::UARTn uartn,bool is_port_remap,uint32_t baud_rate);
 	~UARTCommunicator();
 	void SendString(char *buffer,uint8_t length/*长度包括终结字符\0*/);
 	void SendChar(char send);
@@ -74,7 +75,13 @@ public:
 	uint8_t GetChar();
 	uint8_t PeekChar();
     void CleanRxBuffer();
-
+    inline uint8_t GetCharWithExpiration(uint16_t try_count = 30000)//有过期和重试地查询串口数据
+    {
+    	uint8_t result = 0;
+    	for(int i=0;i < try_count && result == 0;i++)
+    		result = GetChar();
+    	return result;
+    }
 
 	/*..............由中断处理函数调用，在发送缓冲区空时发送下一个字符.............*/
     void OnIntrSendNext();

@@ -14,7 +14,7 @@ using namespace FTMSettings;
 
 //数组，用于控制寄存器寻址
 FTM_Type * FTMx[3] = { FTM0,FTM1,FTM2};
-
+FlexTimerModule *g_steer_pwm;
 FlexTimerModule::FlexTimerModule(FTMSettings::Modules module,FTMSettings::Channels channel,FTMSettings::PortRemapType port_remap_type)
 {
 	  //首先向模块引入时钟信号
@@ -38,8 +38,8 @@ FlexTimerModule::FlexTimerModule(FTMSettings::Modules module,FTMSettings::Channe
 	  //首先清空模块和通道的寄存器，即重置整个PWM输出功能
 	  //下面设置通道的控制寄存器CnSc。它设置了一个边沿对齐，正极性PWM，详见用户手册379页表26-69（以下各位的真值表）
 	  FTMx[module]->CONTROLS[channel].CnSC |= (0
-	                                  //   |FTM_CnSC_ELSA_MASK
-	                                       |FTM_CnSC_ELSB_MASK  //高电平有效脉冲，计数器达到match(CnV)之后输出低电平
+	                                       |FTM_CnSC_ELSA_MASK
+	                                  //   |FTM_CnSC_ELSB_MASK  //低电平有效脉冲，计数器达到match(CnV)之后输出高电平
 	                                  //   |FTM_CnSC_MSA_MASK
 	                                       |FTM_CnSC_MSB_MASK   //边缘对齐PWM
 	                                  //   |FTM_CnSC_CHIE_MASK  //不开中断
@@ -55,15 +55,15 @@ FlexTimerModule::FlexTimerModule(FTMSettings::Modules module,FTMSettings::Channe
 	  //我们还没有设置PWM模块的计数时钟源，因此现在还不会开始输出PWM波形
 }
 
-void FlexTimerModule::SetPWMParam(uint32_t frequency,uint32_t duty_cycle)
+void FlexTimerModule::SetPWMParam(uint16_t frequency,uint16_t duty_cycle)
 {
 	uint32_t sys_clk = SystemCoreClock;
 	//SystemCoreClock是定义在system_SKEAZ1284.h中的全局变量
 	bool freq_is_supported = ( (sys_clk >> (16+2) ) < frequency) && ((sys_clk >> 2) > frequency);
 	//FTM计数器的宽度为16位；我们使用的计数时钟信号为系统时钟的4分频，即10MHz（在EnablePWMOutput函数中设置）
 	//16对应16位寄存器，2对应4分频，即2的2次方。系统时钟的20分频便是PWM模块允许输出的最低频率,4分频便是系统的最大允许频率
-	//计数器开始计数时，为高电平
-	//计数值达到mod时，电平转换。根据我们在构造函数中的设置，此时由高电平转换为低电平。
+	//计数器开始计数时，为一种电平
+	//计数值达到mod时，电平转换。根据我们在构造函数中的设置，此时由低电平转换为高电平。
 	//计数器到达满值时，重置回零，电平转换。
 	if(!freq_is_supported)
 	{
@@ -72,13 +72,15 @@ void FlexTimerModule::SetPWMParam(uint32_t frequency,uint32_t duty_cycle)
 	}
 	//事实上，即使可以支持，太低的频率也没有任何意义。这样做的目的只是为了下面的计算不要出现溢出和非法数据。
 	uint16_t counter_max_value = (uint16_t)((sys_clk >> 2) / frequency) ;
-	uint16_t chn_match_value = (uint16_t)((duty_cycle * (counter_max_value - 0 + 1)) / 10000);
+	uint16_t chn_match_value = (uint16_t)(((uint32_t)(10000 - duty_cycle) * (counter_max_value - 0 + 1)) / 10000);
 	//计数器计数的总值是  最大值-初值+1，其中0是初值（可以改的）
 	//已经定义了占空比是duty_cycle除以1万，因此可以计算出电平翻转时计数器的值
 	FTMx[this->module]->MOD = counter_max_value ;
 	FTMx[this->module]->CONTROLS[this->channel].CnV = chn_match_value  ;
 	//注意到占空比是由每个通道的寄存器决定的，因此一个FTM模块的各个通道可以输出不同的占空比
 	//我们仍未引入计数时钟信号，因此此时计数器仍然不会开始计数
+	this->frequency = frequency;
+	this->duty_cycle = duty_cycle;
 }
 
 void FlexTimerModule::PinSet(FTMSettings::Modules module,FTMSettings::Channels channel,FTMSettings::PortRemapType port_remap_type)
