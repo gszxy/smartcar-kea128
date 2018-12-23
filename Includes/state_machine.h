@@ -1,19 +1,19 @@
 /*
  * state_machine.h
  *
- *  Created on: 2018Äê12ÔÂ15ÈÕ
- *      Author: ÕÅĞ¦Óï
- * ÓĞÏŞ×´Ì¬»úÊµÏÖÎÄ¼ş
+ *  Created on: 2018å¹´12æœˆ15æ—¥
+ *      Author: å¼ ç¬‘è¯­
+ * æœ‰é™çŠ¶æ€æœºå®ç°æ–‡ä»¶
  */
 #ifndef STATE_MACHINE_H
 #define STATE_MACHINE_H
 #include "uart.h"
-namespace cmd//±ÜÃâÎÛÈ¾È«¾ÖÃüÃû¿Õ¼ä
+namespace cmd//é¿å…æ±¡æŸ“å…¨å±€å‘½åç©ºé—´
 {
-	enum Event  //¿ÉÄÜµ¼ÖÂ×´Ì¬»ú×´Ì¬·¢Éú±ä»¯µÄÒ»ÏµÁĞÊÂ¼ş
+	enum Event  //å¯èƒ½å¯¼è‡´çŠ¶æ€æœºçŠ¶æ€å‘ç”Ÿå˜åŒ–çš„ä¸€ç³»åˆ—äº‹ä»¶
 	{
 
-		/*..........ÔËĞĞÊÂ¼ş..........*/
+		/*..........è¿è¡Œäº‹ä»¶..........*/
 		run_start,
 		run_entry_curve,
 		run_entry_upslope,
@@ -21,29 +21,29 @@ namespace cmd//±ÜÃâÎÛÈ¾È«¾ÖÃüÃû¿Õ¼ä
 		run_entry_ring,
 		run_leave_special,
 		run_finish,
-		/*..........Òì³£ÊÂ¼ş..........*/
+		/*..........å¼‚å¸¸äº‹ä»¶..........*/
 		exp_no_signal,
 		exp_speed_abnormal,
 		exp_out_of_track,
 		exp_blocked,
-		/*..........ÆäËüÊÂ¼ş..........*/
-		noevent //±¾ÖÜÆÚÄÚÃ»ÓĞ·¢ÉúÈÎºÎÊÂ¼ş
+		/*..........å…¶å®ƒäº‹ä»¶..........*/
+		noevent //æœ¬å‘¨æœŸå†…æ²¡æœ‰å‘ç”Ÿä»»ä½•äº‹ä»¶
 	};
 
-	enum Command //ÓÉÉÏÎ»»ú·¢ËÍµÄÖ¸Áî
+	enum Command //ç”±ä¸Šä½æœºå‘é€çš„æŒ‡ä»¤
 	{
 		nocommand,
-		/*..........Í£Ö¹Ö¸Áî..........*/
-		stop_force, //Ç¿ÖÆÍ£Ö¹
+		/*..........åœæ­¢æŒ‡ä»¤..........*/
+		stop_force, //å¼ºåˆ¶åœæ­¢
 		stop_ready,
-		/*..........Æô¶¯Ö¸Áî..........*/
+		/*..........å¯åŠ¨æŒ‡ä»¤..........*/
 		start,
-		/*..........²âÊÔÖ¸Áî..........*/
+		/*..........æµ‹è¯•æŒ‡ä»¤..........*/
 		test_uart,
 		test_adc,
 		test_ftm,
 		test_gpio,
-		/*..........¸´Î»Ö¸Áî..........*/
+		/*..........å¤ä½æŒ‡ä»¤..........*/
 		reset
 	};
 }
@@ -55,7 +55,7 @@ class State
 public:
 	virtual State* HandleCommand(uint8_t command) {}
 	virtual State* HandleInput() {}
-	virtual void StateChangeOp()  //´ÓÆäËü×´Ì¬ÇĞ»»µ½µ±Ç°×´Ì¬Ê±±»×´Ì¬»úµ÷ÓÃ
+	virtual void StateChangeOp()  //ä»å…¶å®ƒçŠ¶æ€åˆ‡æ¢åˆ°å½“å‰çŠ¶æ€æ—¶è¢«çŠ¶æ€æœºè°ƒç”¨
 	{
 	}
 	virtual void StateRemainOp()
@@ -74,7 +74,7 @@ class TestADConverterState :public State
 public:
 	virtual State* HandleCommand(uint8_t command);
 	virtual State* HandleInput(){}
-	virtual void StateChangeOp();  //´ÓÆäËü×´Ì¬ÇĞ»»µ½µ±Ç°×´Ì¬Ê±±»×´Ì¬»úµ÷ÓÃ
+	virtual void StateChangeOp();  //ä»å…¶å®ƒçŠ¶æ€åˆ‡æ¢åˆ°å½“å‰çŠ¶æ€æ—¶è¢«çŠ¶æ€æœºè°ƒç”¨
 
 	virtual void StateRemainOp();
 	virtual void StateExitOp();

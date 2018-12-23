@@ -1,8 +1,8 @@
 /*
  * cppmain.h
  *
- *  Created on: 2018Äê12ÔÂ15ÈÕ
- *      Author: ÕÅĞ¦Óï
+ *  Created on: 2018å¹´12æœˆ15æ—¥
+ *      Author: å¼ ç¬‘è¯­
  */
 
 #ifndef INCLUDES_CPPMAIN_H_
@@ -15,7 +15,7 @@ extern "C"{
 
 extern int _cppmain();
 
-/*............ÏÂÃæÊÇÖĞ¶Ï´¦Àíº¯Êı............*/
+/*............ä¸‹é¢æ˜¯ä¸­æ–­å¤„ç†å‡½æ•°............*/
 volatile void __attribute__ ((noinline)) UART0_IRQHandler();
 volatile void __attribute__ ((noinline)) UART1_IRQHandler();
 volatile void __attribute__ ((noinline)) UART2_IRQHandler();

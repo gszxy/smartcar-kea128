@@ -9,7 +9,7 @@ namespace UART_settings
 {
 	enum  UARTn
 	{
-		//³õÊ¼»¯Ä¬ÈÏÅäÖÃ       --TXD--      --RXD--     ¿ÉÒÔ¸´ÓÃÆäËûÍ¨µÀ£¬Çë×ÔÐÐÐÞ¸Ä uart_init
+		//åˆå§‹åŒ–é»˜è®¤é…ç½®       --TXD--      --RXD--     å¯ä»¥å¤ç”¨å…¶ä»–é€šé“ï¼Œè¯·è‡ªè¡Œä¿®æ”¹ uart_init
 		UARTR0 = 0,    //
 		UARTR1 = 1,    //
 		UARTR2 = 2,    //
@@ -26,11 +26,11 @@ private:
 public:
 	inline void DisableIntrOnRecieve()
 	{
-		UARTx[channel]->C2 &= ~UART_C2_RIE_MASK;       // ½ûÖ¹UART½ÓÊÕÖÐ¶Ï
+		UARTx[channel]->C2 &= ~UART_C2_RIE_MASK;       // ç¦æ­¢UARTæŽ¥æ”¶ä¸­æ–­
 	}
 	inline void EnableIntrOnRecieve()
 	{
-		UARTx[channel]->C2 |= UART_C2_RIE_MASK;       // ¿ª·ÅUART½ÓÊÕÖÐ¶Ï
+		UARTx[channel]->C2 |= UART_C2_RIE_MASK;       // å¼€æ”¾UARTæŽ¥æ”¶ä¸­æ–­
 
 	}
 	inline void EnableIntrOnTxRegEmpty()

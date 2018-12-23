@@ -1,8 +1,8 @@
 /*
  * glb_variables.cpp
  *
- *  Created on: 2018Äê12ÔÂ16ÈÕ
- *      Author: ÕÅĞ¦Óï
+ *  Created on: 2018å¹´12æœˆ16æ—¥
+ *      Author: å¼ ç¬‘è¯­
  */
 
 #include "glb_var.h"

@@ -1,8 +1,8 @@
 /*
  * gpio_pindef.h
  *
- *  Created on: 2018Äê12ÔÂ15ÈÕ
- *      Author: ¸´ÖÆÕ³ÌùµÄÁúÇñ¿âÒý½Å¶¨Òå
+ *  Created on: 2018å¹´12æœˆ15æ—¥
+ *      Author: å¤åˆ¶ç²˜è´´çš„é¾™é‚±åº“å¼•è„šå®šä¹‰
  */
 
 #ifndef INCLUDES_GPIO_PINDEF_H_
@@ -23,7 +23,7 @@
 #define PTI     GPIOC
 
 
-//¶¨ÒåPTAÊä³ö¶Ë¿Ú
+//å®šä¹‰PTAè¾“å‡ºç«¯å£
 #define PTA0_OUT     GPIOA->PDORs.PDOR0
 #define PTA1_OUT     GPIOA->PDORs.PDOR1
 #define PTA2_OUT     GPIOA->PDORs.PDOR2
@@ -57,7 +57,7 @@
 #define PTD6_OUT     GPIOA->PDORs.PDOR30
 #define PTD7_OUT     GPIOA->PDORs.PDOR31
 
-//¶¨ÒåPTBÊä³ö¶Ë¿Ú
+//å®šä¹‰PTBè¾“å‡ºç«¯å£
 #define PTE0_OUT     GPIOB->PDORs.PDOR0
 #define PTE1_OUT     GPIOB->PDORs.PDOR1
 #define PTE2_OUT     GPIOB->PDORs.PDOR2
@@ -91,7 +91,7 @@
 #define PTH6_OUT    GPIOB->PDORs.PDOR30
 #define PTH7_OUT    GPIOB->PDORs.PDOR31
 
-//¶¨ÒåPTCÊä³ö¶Ë¿Ú
+//å®šä¹‰PTCè¾“å‡ºç«¯å£
 #define PTI0_OUT     GPIOC->PDORs.PDOR0
 #define PTI1_OUT     GPIOC->PDORs.PDOR1
 #define PTI2_OUT     GPIOC->PDORs.PDOR2
@@ -101,7 +101,7 @@
 #define PTI6_OUT     GPIOC->PDORs.PDOR6
 #define PTI7_OUT     GPIOC->PDORs.PDOR7
 
-//¶¨ÒåPTA·½Ïò¼Ä´æÆ÷
+//å®šä¹‰PTAæ–¹å‘å¯„å­˜å™¨
 #define DDRA0       GPIOA->DDRs.DDR0
 #define DDRA1       GPIOA->DDRs.DDR1
 #define DDRA2       GPIOA->DDRs.DDR2
@@ -135,7 +135,7 @@
 #define DDRD6      GPIOA->DDRs.DDR30
 #define DDRD7      GPIOA->DDRs.DDR31
 
-//¶¨ÒåPTBµÄ·½Ïò¼Ä´æÆ÷
+//å®šä¹‰PTBçš„æ–¹å‘å¯„å­˜å™¨
 #define DDRE0       GPIOB->DDRs.DDR0
 #define DDRE1       GPIOB->DDRs.DDR1
 #define DDRE2       GPIOB->DDRs.DDR2
@@ -169,7 +169,7 @@
 #define DDRH6      GPIOB->DDRs.DDR30
 #define DDRH7      GPIOB->DDRs.DDR31
 
-//¶¨ÒåPTCµÄ·½Ïò¼Ä´æÆ÷
+//å®šä¹‰PTCçš„æ–¹å‘å¯„å­˜å™¨
 #define DDRI0       GPIOC->DDRs.DDR0
 #define DDRI1       GPIOC->DDRs.DDR1
 #define DDRI2       GPIOC->DDRs.DDR2
@@ -179,7 +179,7 @@
 #define DDRI6       GPIOC->DDRs.DDR6
 #define DDRI7       GPIOC->DDRs.DDR7
 
-//¶¨ÒåPTAµÄÊäÈë¶Ë¿Ú
+//å®šä¹‰PTAçš„è¾“å…¥ç«¯å£
 #define PTA0_IN     GPIOA->PDIRs.PDIR0
 #define PTA1_IN     GPIOA->PDIRs.PDIR1
 #define PTA2_IN     GPIOA->PDIRs.PDIR2
@@ -213,7 +213,7 @@
 #define PTD6_IN    GPIOA->PDIRs.PDIR30
 #define PTD7_IN    GPIOA->PDIRs.PDIR31
 
-//¶¨ÒåPTBµÄÊäÈë¶Ë¿Ú
+//å®šä¹‰PTBçš„è¾“å…¥ç«¯å£
 #define PTE0_IN     GPIOB->PDIRs.PDIR0
 #define PTE1_IN     GPIOB->PDIRs.PDIR1
 #define PTE2_IN     GPIOB->PDIRs.PDIR2
@@ -247,7 +247,7 @@
 #define PTH6_IN    GPIOB->PDIRs.PDIR30
 #define PTH7_IN    GPIOB->PDIRs.PDIR31
 
-//¶¨ÒåPTCµÄÊäÈë¶Ë¿Ú
+//å®šä¹‰PTCçš„è¾“å…¥ç«¯å£
 #define PTI0_IN     GPIOC->PDIRs.PDIR0
 #define PTI1_IN     GPIOC->PDIRs.PDIR1
 #define PTI2_IN     GPIOC->PDIRs.PDIR2

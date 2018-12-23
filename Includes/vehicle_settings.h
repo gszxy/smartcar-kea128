@@ -1,9 +1,9 @@
 /*
  * vehicle_settings.h
  *
- *  Created on: 2018Äê12ÔÂ18ÈÕ
- *      Author: ÕÅĞ¦Óï
- *      ÖÇÄÜ³µ³ÌĞò¿ØÖÆÀàÉèÖÃ¡£ÀıÈçÄ¬ÈÏËÙ¶ÈµÈµÈ
+ *  Created on: 2018å¹´12æœˆ18æ—¥
+ *      Author: å¼ ç¬‘è¯­
+ *      æ™ºèƒ½è½¦ç¨‹åºæ§åˆ¶ç±»è®¾ç½®ã€‚ä¾‹å¦‚é»˜è®¤é€Ÿåº¦ç­‰ç­‰
  */
 
 #ifndef INCLUDES_VEHICLE_SETTINGS_H_
@@ -22,10 +22,10 @@ static class VehicleSettings
 {
 public:
 	static uint16_t default_speed;
-	static uint16_t steer_mid_freq;//¶æ»úÖĞÎ»¶ÔÓ¦µÄPWM¿ØÖÆĞÅºÅÆµÂÊ
-	static uint16_t steer_max_turn_freq_change; //¶æ»ú´ÓÖĞÎ»ÏòÒ»²à×ßµ½¾¡Í·ËùĞèÒªµÄÆµÂÊ±ä»¯Á¿
-	static PIDParams steer_pid_params; //¶æ»úPID¿ØÖÆÏµÊı
-	static PIDParams motor_pid_params; //µç»úPID¿ØÖÆÏµÊı
+	static uint16_t steer_mid_freq;//èˆµæœºä¸­ä½å¯¹åº”çš„PWMæ§åˆ¶ä¿¡å·é¢‘ç‡
+	static uint16_t steer_max_turn_freq_change; //èˆµæœºä»ä¸­ä½å‘ä¸€ä¾§èµ°åˆ°å°½å¤´æ‰€éœ€è¦çš„é¢‘ç‡å˜åŒ–é‡
+	static PIDParams steer_pid_params; //èˆµæœºPIDæ§åˆ¶ç³»æ•°
+	static PIDParams motor_pid_params; //ç”µæœºPIDæ§åˆ¶ç³»æ•°
 
 	static inline void GetVehicleSettings()
 	{

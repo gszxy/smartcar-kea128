@@ -1,8 +1,8 @@
 /*
  * communicate.cpp
  *
- *  Created on: 2018Äê12ÔÂ15ÈÕ
- *      Author: ÕÅĞ¦Óï
+ *  Created on: 2018å¹´12æœˆ15æ—¥
+ *      Author: å¼ ç¬‘è¯­
  */
 
 #include <cstdint>
@@ -12,21 +12,21 @@
 
 using namespace std;
 
-UARTCommunicator *cmtr_uart[3] = {nullptr,nullptr,nullptr};//ÏÂÃæµÄ¹¹Ôìº¯ÊıÀï»áĞ´Èë
+UARTCommunicator *cmtr_uart[3] = {nullptr,nullptr,nullptr};//ä¸‹é¢çš„æ„é€ å‡½æ•°é‡Œä¼šå†™å…¥
 
 UARTCommunicator::UARTCommunicator(uint8_t rx_bufferlen,uint8_t tx_bufferlen,UART_settings::UARTn uartn,bool is_port_remap,uint16_t baud_rate)
 {
 	if(uartn == UART_settings::UARTR0)
-		NVIC_DisableIRQ(UART0_IRQn);// ¹ØÖĞ¶Ï¿ØÖÆÆ÷IRQÖĞ¶Ï
+		NVIC_DisableIRQ(UART0_IRQn);// å…³ä¸­æ–­æ§åˆ¶å™¨IRQä¸­æ–­
 	else if (uartn == UART_settings::UARTR1)
 		NVIC_DisableIRQ(UART1_IRQn);
 	else if (uartn == UART_settings::UARTR0)
 		NVIC_DisableIRQ(UART2_IRQn);
-	//¹¹Ôìº¯ÊıÊ±Ğò¹Ø¼ü£¬±ØĞëÆÁ±ÎÖĞ¶Ï
+	//æ„é€ å‡½æ•°æ—¶åºå…³é”®ï¼Œå¿…é¡»å±è”½ä¸­æ–­
 
-	//µÚÒ»²½£º×¢²á¶ÔÏó¸øÖĞ¶Ï´¦Àíº¯Êı
+	//ç¬¬ä¸€æ­¥ï¼šæ³¨å†Œå¯¹è±¡ç»™ä¸­æ–­å¤„ç†å‡½æ•°
 	cmtr_uart[(uint8_t)uartn] = this;
-	//µÚ¶ş²½£º³õÊ¼»¯Ñ­»·»º³åÇø
+	//ç¬¬äºŒæ­¥ï¼šåˆå§‹åŒ–å¾ªç¯ç¼“å†²åŒº
 	rxbuffer = new uint8_t[rx_bufferlen];
 	rxb_head_ptr = rxb_tail_ptr = rxbuffer ;
 	txbuffer = new uint8_t[tx_bufferlen];
@@ -35,11 +35,11 @@ UARTCommunicator::UARTCommunicator(uint8_t rx_bufferlen,uint8_t tx_bufferlen,UAR
 	txb_tail_ptr += 1;
 	rxbufferlen = rx_bufferlen;
 	txbufferlen = tx_bufferlen;
-	//µÚÈı²½£º³õÊ¼»¯UARTÄ£¿é
+	//ç¬¬ä¸‰æ­¥ï¼šåˆå§‹åŒ–UARTæ¨¡å—
 	this->uart = new UARTModule(uartn,is_port_remap,baud_rate,true,true);
 
 	if(uartn == UART_settings::UARTR0)
-		NVIC_EnableIRQ(UART0_IRQn);// ¿ªÖĞ¶Ï¿ØÖÆÆ÷IRQÖĞ¶Ï
+		NVIC_EnableIRQ(UART0_IRQn);// å¼€ä¸­æ–­æ§åˆ¶å™¨IRQä¸­æ–­
 	else if (uartn == UART_settings::UARTR1)
 		NVIC_EnableIRQ(UART1_IRQn);
 	else if (uartn == UART_settings::UARTR0)
@@ -56,7 +56,7 @@ UARTCommunicator::~UARTCommunicator()
 	delete uart;
 }
 
-void UARTCommunicator::SendString(char *buffer,uint8_t length/*³¤¶È°üÀ¨ÖÕ½á×Ö·û\0*/)
+void UARTCommunicator::SendString(char *buffer,uint8_t length/*é•¿åº¦åŒ…æ‹¬ç»ˆç»“å­—ç¬¦\0*/)
 {
 	if(!length)
 		return;
@@ -65,14 +65,14 @@ void UARTCommunicator::SendString(char *buffer,uint8_t length/*³¤¶È°üÀ¨ÖÕ½á×Ö·û\
 	{
 		*(txb_tail_ptr - 1) = buffer[i];
 		++txb_tail_ptr;
-		if(txb_tail_ptr - txbuffer >= (txbufferlen + 1))//Î²Ö¸Õë³¬³ö»º³åÇøÄ©Î²
+		if(txb_tail_ptr - txbuffer >= (txbufferlen + 1))//å°¾æŒ‡é’ˆè¶…å‡ºç¼“å†²åŒºæœ«å°¾
 			txb_tail_ptr = txbuffer;
 		if(txb_tail_ptr == txb_head_ptr)
 			++txb_head_ptr;
-		//»º³åÇøÂú£¬¸²¸Çµô×î¿ªÊ¼µÄÒ»¸ö×Ö·û¡£
+		//ç¼“å†²åŒºæ»¡ï¼Œè¦†ç›–æ‰æœ€å¼€å§‹çš„ä¸€ä¸ªå­—ç¬¦ã€‚
 	}
 	EnableNVICIntr();
-	//¿ª¿Õ·¢ËÍ¼Ä´æÆ÷ÖĞ¶Ï
+	//å¼€ç©ºå‘é€å¯„å­˜å™¨ä¸­æ–­
 	this->uart->EnableIntrOnTxRegEmpty();
 
 }
@@ -84,11 +84,11 @@ void UARTCommunicator::SendChar(char send)
 uint8_t UARTCommunicator::GetChar()
 {
 	DisableNVICIntr();
-	if((rxb_head_ptr + 1 == rxb_tail_ptr) || ((rxb_head_ptr - rxb_tail_ptr) == (rxbufferlen - 1)))//»º³åÇø¿Õ
+	if((rxb_head_ptr + 1 == rxb_tail_ptr) || ((rxb_head_ptr - rxb_tail_ptr) == (rxbufferlen - 1)))//ç¼“å†²åŒºç©º
 		return 0;
 	uint8_t recieve = *rxb_head_ptr;
 	++rxb_head_ptr;
-	if(rxb_head_ptr - rxbuffer >= rxbufferlen )//Í·Ö¸Õë³¬³ö»º³åÇøÄ©Î²
+	if(rxb_head_ptr - rxbuffer >= rxbufferlen )//å¤´æŒ‡é’ˆè¶…å‡ºç¼“å†²åŒºæœ«å°¾
 		rxb_head_ptr = rxbuffer;
 	EnableNVICIntr();
 	return recieve;
@@ -104,30 +104,30 @@ void UARTCommunicator::CleanRxBuffer()
 	rxb_head_ptr = rxb_tail_ptr = rxbuffer ;
 }
 
-/*..............ÖĞ¶Ï´¦Àíº¯Êı£¬ÔÚ·¢ËÍ»º³åÇø¿ÕÊ±·¢ËÍÏÂÒ»¸ö×Ö·û.............*/
+/*..............ä¸­æ–­å¤„ç†å‡½æ•°ï¼Œåœ¨å‘é€ç¼“å†²åŒºç©ºæ—¶å‘é€ä¸‹ä¸€ä¸ªå­—ç¬¦.............*/
 void UARTCommunicator::OnIntrSendNext()
 {
 	DisableNVICIntr();
-	if((txb_head_ptr + 1 == txb_tail_ptr) || ((txb_head_ptr - txb_tail_ptr) == (txbufferlen - 1)))//»º³åÇø¿Õ
+	if((txb_head_ptr + 1 == txb_tail_ptr) || ((txb_head_ptr - txb_tail_ptr) == (txbufferlen - 1)))//ç¼“å†²åŒºç©º
 	{
 		this->uart->DisableIntrOnTxRegEmpty();
 		return;
 	}
 	this->uart->SendChar(*txb_head_ptr);
 	++txb_head_ptr;
-	if(txb_head_ptr - txbuffer >= txbufferlen)//Ö¸Õë³¬³ö»º³åÇøÄ©Î²
+	if(txb_head_ptr - txbuffer >= txbufferlen)//æŒ‡é’ˆè¶…å‡ºç¼“å†²åŒºæœ«å°¾
 		txb_head_ptr = txbuffer;
 	EnableNVICIntr();
 	this->uart->EnableIntrOnTxRegEmpty();
 }
-/*..............ÖĞ¶Ï´¦Àíº¯Êı£¬ÔÚ½ÓÊÕ»º³åÇøÂúÊ±¶ÁÈ¡ÏÂÒ»¸ö×Ö·û.............*/
+/*..............ä¸­æ–­å¤„ç†å‡½æ•°ï¼Œåœ¨æ¥æ”¶ç¼“å†²åŒºæ»¡æ—¶è¯»å–ä¸‹ä¸€ä¸ªå­—ç¬¦.............*/
 void UARTCommunicator::OnIntrRecieveNext()
 {
 	*(rxb_tail_ptr - 1) = this->uart->RecieveChar();
 	++rxb_tail_ptr;
-	if(rxb_tail_ptr - rxbuffer >= (rxbufferlen + 1) )//Î²Ö¸Õë³¬³ö»º³åÇøÄ©Î²
+	if(rxb_tail_ptr - rxbuffer >= (rxbufferlen + 1) )//å°¾æŒ‡é’ˆè¶…å‡ºç¼“å†²åŒºæœ«å°¾
 		rxb_tail_ptr = rxbuffer;
-	if(rxb_tail_ptr == rxb_head_ptr)//»º³åÇøÂú
+	if(rxb_tail_ptr == rxb_head_ptr)//ç¼“å†²åŒºæ»¡
 		++rxb_head_ptr;
 }
 

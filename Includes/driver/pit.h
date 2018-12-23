@@ -1,8 +1,8 @@
 /*
  * pit.h
  *
- *  Created on: 2018Äê12ÔÂ21ÈÕ
- *      Author: ÕÅÐ¦Óï
+ *  Created on: 2018å¹´12æœˆ21æ—¥
+ *      Author: å¼ ç¬‘è¯­
  */
 
 #ifndef INCLUDES_DRIVER_PIT_H_

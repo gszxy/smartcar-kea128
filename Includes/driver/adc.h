@@ -30,8 +30,8 @@
 *
 * @brief header file for ADC module utilities (ADC). 
 *
-*ÕÅĞ¦Óï  2018Äê12ÔÂ8ÈÕĞŞ¸Ä  Ôö¼ÓÃæÏò¶ÔÏó¹¦ÄÜ
-*´ËÍ·ÎÄ¼şÖ»Ö§³Öc++
+*å¼ ç¬‘è¯­  2018å¹´12æœˆ8æ—¥ä¿®æ”¹  å¢åŠ é¢å‘å¯¹è±¡åŠŸèƒ½
+*æ­¤å¤´æ–‡ä»¶åªæ”¯æŒc++
 *******************************************************************************
 *
 * provide APIs for accessing ADC module (ADC)
@@ -158,26 +158,26 @@ enum ADCHn
 
 /******************************************************************************
 * Objective A-D conversion classes
-* ÕÅĞ¦Óï 2018Äê12ÔÂ8ÈÕÌí¼Ó
+* å¼ ç¬‘è¯­ 2018å¹´12æœˆ8æ—¥æ·»åŠ 
 ******************************************************************************/
 
 class ADCModule
 {
-	//todo:Ö§³ÖÖĞ¶ÏÄ£Ê½ADC×ª»»
+	//todo:æ”¯æŒä¸­æ–­æ¨¡å¼ADCè½¬æ¢
 private:
 	static uint32_t chn_occupation_flag ;
-	//15¸öADCÍ¨µÀ+µçÔ´ºÍÎÂ¶ÈµÈ¶îÍâÍ¨µÀ£¬ÓÃÕâ¸öÊıµÄÃ¿Ò»Î»¼ÇÔØÃ¿Ò»¸öchannelÊÇ·ñÒÑ¾­±»³õÊ¼»¯
+	//15ä¸ªADCé€šé“+ç”µæºå’Œæ¸©åº¦ç­‰é¢å¤–é€šé“ï¼Œç”¨è¿™ä¸ªæ•°çš„æ¯ä¸€ä½è®°è½½æ¯ä¸€ä¸ªchannelæ˜¯å¦å·²ç»è¢«åˆå§‹åŒ–
 
 	ADCHn channel;
 	ADC_nbit bit;
-	bool channel_active = false;//¸ÃadcÍ¨µÀÊÇ·ñÕıÔÚÕ¼ÓÃ×ª»»¡£·ÀÖ¹×ª»»½á¹û±»ÆäËüÍ¨µÀ´íÎóµØ¶ÁÈ¡
-	int8_t active_convert_count = 0;//±£´æµ±Ç°ÕıÔÚ½øĞĞ×ª»»µÄÁ¬Ğø×ª»»´ÎÊı
+	bool channel_active = false;//è¯¥adcé€šé“æ˜¯å¦æ­£åœ¨å ç”¨è½¬æ¢ã€‚é˜²æ­¢è½¬æ¢ç»“æœè¢«å…¶å®ƒé€šé“é”™è¯¯åœ°è¯»å–
+	int8_t active_convert_count = 0;//ä¿å­˜å½“å‰æ­£åœ¨è¿›è¡Œè½¬æ¢çš„è¿ç»­è½¬æ¢æ¬¡æ•°
 public:
 	static inline bool IsModuleInited(ADCHn _channel)
 	{
 		uint32_t mask = (1<<(int)_channel);
 		return ADCModule::chn_occupation_flag & mask ;
-	}//·µ»ØADCÍ¨µÀÊÇ·ñÒÑ¾­±»³õÊ¼»¯
+	}//è¿”å›ADCé€šé“æ˜¯å¦å·²ç»è¢«åˆå§‹åŒ–
     static inline uint8_t GetIsConversionOngoing()
 	{
     	return (ADC->SC2) & ADC_SC2_ADACT_MASK;
@@ -194,14 +194,14 @@ public:
     {
     	ADC->SC1 &= ~ADC_SC1_AIEN_MASK;
     }
-	ADCModule(ADCHn channel/*ADC×ª»»µÄÍ¨µÀ*/,ADC_nbit bit/*ADC×ª»»µÄÎ»Êı£¬Ö§³Ö8£¬10£¬12Î»*/);
-    int8_t StartConversion(uint8_t count /*countµÄ´óĞ¡Ö§³Ö1-8*/);
+	ADCModule(ADCHn channel/*ADCè½¬æ¢çš„é€šé“*/,ADC_nbit bit/*ADCè½¬æ¢çš„ä½æ•°ï¼Œæ”¯æŒ8ï¼Œ10ï¼Œ12ä½*/);
+    int8_t StartConversion(uint8_t count /*countçš„å¤§å°æ”¯æŒ1-8*/);
     uint16_t TryFetchResult();
     ~ADCModule();
 
 };
 
-namespace //ÄäÃûÃüÃû¿Õ¼ä£¬½ûÖ¹´ÓÍâ²¿·ÃÎÊ
+namespace //åŒ¿åå‘½åç©ºé—´ï¼Œç¦æ­¢ä»å¤–éƒ¨è®¿é—®
 {
 
 }

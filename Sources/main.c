@@ -39,9 +39,9 @@ int main(void)
 
     /* Write your code here */
 	_cppmain();
-	//IDEÕÒ²»µ½main.c¾Í»á±¨´í
-	//ËùÒÔÎÒÃÇÂú×ãËû¡£
-	//ÒÔÉÏº¯Êıµ÷ÓÃc++Ö÷º¯Êı¡£´Ëº¯ÊıÓÀÔ¶²»»á·µ»Ø¡£
+	//IDEæ‰¾ä¸åˆ°main.cå°±ä¼šæŠ¥é”™
+	//æ‰€ä»¥æˆ‘ä»¬æ»¡è¶³ä»–ã€‚
+	//ä»¥ä¸Šå‡½æ•°è°ƒç”¨c++ä¸»å‡½æ•°ã€‚æ­¤å‡½æ•°æ°¸è¿œä¸ä¼šè¿”å›ã€‚
     /* This for loop should be replaced. By default this loop allows a single stepping. */
     for (;;) {
         i++;

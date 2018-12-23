@@ -1,8 +1,8 @@
 /*
  * sensor.cpp
  *
- *  Created on: 2018Äê12ÔÂ21ÈÕ
- *      Author: ÕÅĞ¦Óï
+ *  Created on: 2018å¹´12æœˆ21æ—¥
+ *      Author: å¼ ç¬‘è¯­
  */
 
 #include "sensor.h"
@@ -18,7 +18,7 @@ InductorSensor::InductorSensor()
 	adcm = new ADCModule[3]{ADCModule(ADC_CHANNEL_AD0,ADC_12BIT),ADCModule(ADC_CHANNEL_AD1,ADC_12BIT),ADCModule(ADC_CHANNEL_AD0,ADC_12BIT)};
 	for(int i=0;i<3;i++)
 	{
-		adcm[i].EnableIntrOnCovertFinished();//¿ª×ª»»Íê³ÉÖĞ¶Ï
+		adcm[i].EnableIntrOnCovertFinished();//å¼€è½¬æ¢å®Œæˆä¸­æ–­
 	}
 	inductor_data = new InductorData();
 
@@ -35,13 +35,13 @@ void InductorSensor::StartConvert()
 	if(sys_has_ongoing_convert)
 		return;
 	adcm[0].StartConversion(7);
-	//¿ªÊ¼µÚÒ»¸ö×ª»»¡£Ö®ºóµÄ¾Í½»¸øÖĞ¶Ï´¦Àíº¯ÊıÁË
+	//å¼€å§‹ç¬¬ä¸€ä¸ªè½¬æ¢ã€‚ä¹‹åçš„å°±äº¤ç»™ä¸­æ–­å¤„ç†å‡½æ•°äº†
 	current_adc_m = 0;
 	sys_has_ongoing_convert = true;
 }
 
 volatile void __attribute__((interrupt ("IRQ"))) PIT_CH0_IRQHandler()
-{//¶¨Ê±ÖĞ¶Ï£¬¿ªÊ¼AD×ª»»ºÍÊı¾İ¸üĞÂ
+{//å®šæ—¶ä¸­æ–­ï¼Œå¼€å§‹ADè½¬æ¢å’Œæ•°æ®æ›´æ–°
 	g_sensor->StartConvert();
 }
 
@@ -56,7 +56,7 @@ volatile void __attribute__((interrupt ("IRQ"))) ADC_IRQHandler()
 	else//=3
 	{
 		g_sensor->sys_has_ongoing_convert = false;
-		g_sensor->inductor_data->flag_data_updated = true; //Ö¸Ê¾Êı¾İÒÑ¾­¸üĞÂÍê³É
+		g_sensor->inductor_data->flag_data_updated = true; //æŒ‡ç¤ºæ•°æ®å·²ç»æ›´æ–°å®Œæˆ
 	}
 
 }

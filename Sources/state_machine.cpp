@@ -1,10 +1,10 @@
 /*
  * state_machine.c
  *
- *  Created on: 2018Äê12ÔÂ15ÈÕ
- *      Author: ÕÅĞ¦Óï
+ *  Created on: 2018å¹´12æœˆ15æ—¥
+ *      Author: å¼ ç¬‘è¯­
  *
- *      ×¢Òâ£º±¾ÎÄ¼şÖĞ²¢²»ÊµÏÖStateMachineÖĞÉæ¼°µ½Ğ¡³µ¾ßÌå¿ØÖÆµÄº¯Êı
+ *      æ³¨æ„ï¼šæœ¬æ–‡ä»¶ä¸­å¹¶ä¸å®ç°StateMachineä¸­æ¶‰åŠåˆ°å°è½¦å…·ä½“æ§åˆ¶çš„å‡½æ•°
  */
 
 #include <cstdint>
@@ -30,10 +30,10 @@ State* IdleState::HandleCommand(uint8_t command)
 
 State* TestUARTState::HandleCommand(uint8_t command)
 {
-	if(command == cmd::stop_force)//½öµ±ÃüÁîÎªÇ¿ÖÆÍ£Ö¹£¨0£©Ê±£¬³ÌĞò¿ÉÒÔÍË³ö´®¿Ú²âÊÔ×´Ì¬¡£·ñÔò½«ÊÕµ½µÄÊı¾İÔ­Ñù·¢»¹¸øÉÏÎ»»ú
+	if(command == cmd::stop_force)//ä»…å½“å‘½ä»¤ä¸ºå¼ºåˆ¶åœæ­¢ï¼ˆ0ï¼‰æ—¶ï¼Œç¨‹åºå¯ä»¥é€€å‡ºä¸²å£æµ‹è¯•çŠ¶æ€ã€‚å¦åˆ™å°†æ”¶åˆ°çš„æ•°æ®åŸæ ·å‘è¿˜ç»™ä¸Šä½æœº
 		return new IdleState();
 	g_uartc->SendChar(command);
-	//×¢:gÇ°×ºÊÇÍ³Ò»¶¨ÒåÔÚglb_var.hÄÚµÄÈ«¾Ö±äÁ¿
+	//æ³¨:gå‰ç¼€æ˜¯ç»Ÿä¸€å®šä¹‰åœ¨glb_var.hå†…çš„å…¨å±€å˜é‡
 	return nullptr;
 }
 State* TestUARTState::HandleInput()
@@ -79,7 +79,7 @@ void StateMachine::SendCommand(uint8_t command)
 
 State* TestADConverterState::HandleCommand(uint8_t command)
 {
-	if(command == cmd::stop_force)//½öµ±ÃüÁîÎªÇ¿ÖÆÍ£Ö¹£¨0£©Ê±£¬³ÌĞò¿ÉÒÔÍË³öADC²âÊÔ×´Ì¬¡£·ñÔò½«ÊÕµ½µÄÊı¾İÔ­Ñù·¢»¹¸øÉÏÎ»»ú
+	if(command == cmd::stop_force)//ä»…å½“å‘½ä»¤ä¸ºå¼ºåˆ¶åœæ­¢ï¼ˆ0ï¼‰æ—¶ï¼Œç¨‹åºå¯ä»¥é€€å‡ºADCæµ‹è¯•çŠ¶æ€ã€‚å¦åˆ™å°†æ”¶åˆ°çš„æ•°æ®åŸæ ·å‘è¿˜ç»™ä¸Šä½æœº
 		return new IdleState();
 }
 
@@ -106,7 +106,7 @@ void TestADConverterState::StateRemainOp()
 	strl = snprintf(msg,50,"\ntime consumption:%d",counter);
 	g_uartc->SendString(msg,strl);
 
-	//×¢:gÇ°×ºÊÇÍ³Ò»¶¨ÒåÔÚglb_var.hÄÚµÄÈ«¾Ö±äÁ¿
+	//æ³¨:gå‰ç¼€æ˜¯ç»Ÿä¸€å®šä¹‰åœ¨glb_var.hå†…çš„å…¨å±€å˜é‡
 }
 
 

@@ -1,6 +1,6 @@
 /*
- * ¶¨Ê±ÖÐ¶ÏÄ£¿éÇý¶¯
- * ÕÅÐ¦Óï 12ÔÂ21ÈÕÌí¼Ó
+ * å®šæ—¶ä¸­æ–­æ¨¡å—é©±åŠ¨
+ * å¼ ç¬‘è¯­ 12æœˆ21æ—¥æ·»åŠ 
  * pit.cpp
  */
 #include "pit.h"
@@ -13,7 +13,7 @@ PeriodicInterruptTimer::PeriodicInterruptTimer(PITsettings::Channel channel)
     SIM->SCGC |= SIM_SCGC_PIT_MASK;     /*!< enable clock to PIT */
 
     PIT->MCR &= ~PIT_MCR_MDIS_MASK;
-    PIT->CHANNEL[channel].LDVAL = 0xFFFFFFFF ;//ÓÃ»§Ã»ÓÐÉèÖÃÖ®Ç°£¬Ä¬ÈÏÎª×î´óÖÐ¶Ï¼ä¸ô
+    PIT->CHANNEL[channel].LDVAL = 0xFFFFFFFF ;//ç”¨æˆ·æ²¡æœ‰è®¾ç½®ä¹‹å‰ï¼Œé»˜è®¤ä¸ºæœ€å¤§ä¸­æ–­é—´éš”
     PIT->CHANNEL[channel].TCTRL |= PIT_TCTRL_TEN_MASK;
     PIT->CHANNEL[channel].TFLG  |= PIT_TFLG_TIF_MASK;
     this->channel = channel;

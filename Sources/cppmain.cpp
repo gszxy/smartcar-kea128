@@ -14,36 +14,36 @@ int _cppmain()
 {
 
 	bool vehicle_has_piority_command = false;
-	//ÏÂÃæÊÇÄ£¿é³õÊ¼»¯¹¤×÷
-	//´®¿Ú²âÊÔÄ£¿é³õÊ¼»¯£¨ÁÙÊ±£©
+	//ä¸‹é¢æ˜¯æ¨¡å—åˆå§‹åŒ–å·¥ä½œ
+	//ä¸²å£æµ‹è¯•æ¨¡å—åˆå§‹åŒ–ï¼ˆä¸´æ—¶ï¼‰
 	g_test_adc = new ADCModule(ADC_CHANNEL_AD0,ADC_8BIT);
-	//´®¿Ú³õÊ¼»¯
+	//ä¸²å£åˆå§‹åŒ–
 	g_uartc = new UARTCommunicator(16, 32, UART_settings::UARTR0, false, 19200);
-	//×´Ì¬»ú³õÊ¼»¯
+	//çŠ¶æ€æœºåˆå§‹åŒ–
 	StateMachine *fsm = new StateMachine();
 	char msg[] = "startup\n";
 	g_uartc->SendString(msg,9);
 
-	//²âÊÔPWMÊä³ö
+	//æµ‹è¯•PWMè¾“å‡º
 	FlexTimerModule *ftm_m2ch0 = new FlexTimerModule(FTMSettings::mFTM2,FTMSettings::FTM_CH0,FTMSettings::remap_first);
 	ftm_m2ch0->SetPWMParam(2000,5000);
 	ftm_m2ch0->EnablePWMOutput();
-	//PWMÊä³öÉèÖÃ½áÊø
-	while(1)//³ÌÐòÖ÷Ñ­»·
+	//PWMè¾“å‡ºè®¾ç½®ç»“æŸ
+	while(1)//ç¨‹åºä¸»å¾ªçŽ¯
 	{
-		/*............¼ì²éÍ¨Ñ¶ÇøÊÇ·ñÓÐÏàÓ¦ÃüÁîµ½´ï............*/
+		/*............æ£€æŸ¥é€šè®¯åŒºæ˜¯å¦æœ‰ç›¸åº”å‘½ä»¤åˆ°è¾¾............*/
 		uint8_t command = g_uartc->GetChar();
-		/*...........¼ì²éÖÐ¶Ï´¦Àí³ÌÐòÊÇ·ñÒÑ¾­¸üÐÂÊý¾Ý..........*/
+		/*...........æ£€æŸ¥ä¸­æ–­å¤„ç†ç¨‹åºæ˜¯å¦å·²ç»æ›´æ–°æ•°æ®..........*/
 
 
-		/*.............×´Ì¬»ú¸üÐÂ²¢Ö´ÐÐÏàÓ¦²Ù×÷.............*/
+		/*.............çŠ¶æ€æœºæ›´æ–°å¹¶æ‰§è¡Œç›¸åº”æ“ä½œ.............*/
 		if(command!=0)
 			fsm->SendCommand(command);
 
 	}
 
 	while(1);
-	return 0;//ÓÀ²»·µ»Ø
+	return 0;//æ°¸ä¸è¿”å›ž
 }
 
 
@@ -58,9 +58,9 @@ volatile void __attribute__((interrupt ("IRQ"))) UART0_IRQHandler()
 		return;
 	}
 
-	if(UARTx[0]->S1 & UART_S1_TDRE_MASK);//Èç¹û·¢ËÍ¼Ä´æÆ÷Îª¿Õ
+	if(UARTx[0]->S1 & UART_S1_TDRE_MASK);//å¦‚æžœå‘é€å¯„å­˜å™¨ä¸ºç©º
 		cmtr_uart[0]->OnIntrSendNext();
-	if(UARTx[0]->S1 & UART_S1_RDRF_MASK)//Èç¹û½ÓÊÜ¼Ä´æÆ÷ÎªÂú
+	if(UARTx[0]->S1 & UART_S1_RDRF_MASK)//å¦‚æžœæŽ¥å—å¯„å­˜å™¨ä¸ºæ»¡
 		cmtr_uart[0]->OnIntrRecieveNext();
 	NVIC_EnableIRQ(UART0_IRQn);
 }
@@ -76,9 +76,9 @@ volatile void __attribute__((interrupt ("IRQ"))) UART1_IRQHandler()
 	}
 
 
-	if(UARTx[1]->S1 & UART_S1_TDRE_MASK);//Èç¹û·¢ËÍ¼Ä´æÆ÷Îª¿Õ
+	if(UARTx[1]->S1 & UART_S1_TDRE_MASK);//å¦‚æžœå‘é€å¯„å­˜å™¨ä¸ºç©º
 		cmtr_uart[1]->OnIntrSendNext();
-	if(UARTx[1]->S1 & UART_S1_RDRF_MASK)//Èç¹û½ÓÊÜ¼Ä´æÆ÷ÎªÂú
+	if(UARTx[1]->S1 & UART_S1_RDRF_MASK)//å¦‚æžœæŽ¥å—å¯„å­˜å™¨ä¸ºæ»¡
 		cmtr_uart[1]->OnIntrRecieveNext();
 	NVIC_EnableIRQ(UART1_IRQn);
 }
@@ -94,9 +94,9 @@ volatile void __attribute__((interrupt ("IRQ"))) UART2_IRQHandler()
 	}
 
 
-	if(UARTx[2]->S1 & UART_S1_TDRE_MASK);//Èç¹û·¢ËÍ¼Ä´æÆ÷Îª¿Õ
+	if(UARTx[2]->S1 & UART_S1_TDRE_MASK);//å¦‚æžœå‘é€å¯„å­˜å™¨ä¸ºç©º
 		cmtr_uart[2]->OnIntrSendNext();
-	if(UARTx[1]->S1 & UART_S1_RDRF_MASK)//Èç¹û½ÓÊÜ¼Ä´æÆ÷ÎªÂú
+	if(UARTx[1]->S1 & UART_S1_RDRF_MASK)//å¦‚æžœæŽ¥å—å¯„å­˜å™¨ä¸ºæ»¡
 		cmtr_uart[2]->OnIntrRecieveNext();
 	NVIC_EnableIRQ(UART1_IRQn);
 }

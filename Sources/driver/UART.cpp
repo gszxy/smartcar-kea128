@@ -5,32 +5,32 @@
 
 using namespace std;
 volatile UART_Type *UARTx[3] = {UART0,UART1,UART2};
-uint8_t UARTModule::chn_occupation_flag = 0x0;//¾²Ì¬±äÁ¿³õÊ¼»¯
+uint8_t UARTModule::chn_occupation_flag = 0x0;//é™æ€å˜é‡åˆå§‹åŒ–
 
 UARTModule::UARTModule(UART_settings::UARTn uartn, bool is_port_remap, uint16_t baud_rate,bool enable_recieve_intr ,bool enable_txreg_empty_intr)
 {
-	//TODO:¼ì²éÍ¨µÀÊÇ·ñÒÑ¾­±»Õ¼ÓÃ£¬²¢ÇÒÔÚ±»Õ¼ÓÃ±¨´í
+	//TODO:æ£€æŸ¥é€šé“æ˜¯å¦å·²ç»è¢«å ç”¨ï¼Œå¹¶ä¸”åœ¨è¢«å ç”¨æŠ¥é”™
 	this->is_pin_remap = is_port_remap;
 	UARTModule::chn_occupation_flag += (1 << static_cast<uint8_t>(uartn));
 	this->channel = uartn;
 
-	//ÏÂÃæ´úÂë³­Ï®ÓÚÁúÇñ¿â¡£Ö®ºó´¦ÀíÒ»ÏÂ
+	//ä¸‹é¢ä»£ç æŠ„è¢­äºŽé¾™é‚±åº“ã€‚ä¹‹åŽå¤„ç†ä¸€ä¸‹
 	uint8_t temp;
 	uint16_t  sbr;
 	sbr = (uint16_t)(BUS_CLK_HZ/(16*baud_rate));
-	//UART ²¨ÌØÂÊ = UART Ä£¿éÊ±ÖÓ / (16 ¡Á (SBR[12:0] + BRFA))
-	//²»¿¼ÂÇ BRFA µÄÇé¿öÏÂ£¬ SBR = UART Ä£¿éÊ±ÖÓ / (16 * UART ²¨ÌØÂÊ)
-	if(sbr > 0x1FFF) sbr = 0x1FFF;                                       //SBR ÊÇ 13bit£¬×î´óÎª 0x1FFF
+	//UART æ³¢ç‰¹çŽ‡ = UART æ¨¡å—æ—¶é’Ÿ / (16 Ã— (SBR[12:0] + BRFA))
+	//ä¸è€ƒè™‘ BRFA çš„æƒ…å†µä¸‹ï¼Œ SBR = UART æ¨¡å—æ—¶é’Ÿ / (16 * UART æ³¢ç‰¹çŽ‡)
+	if(sbr > 0x1FFF) sbr = 0x1FFF;                                       //SBR æ˜¯ 13bitï¼Œæœ€å¤§ä¸º 0x1FFF
 	switch(uartn)
 	{
 	case UART_settings::UARTR0:
-		//Í¨¹ý¶ÔSIM¼Ä´æÆ÷µÄÉèÖÃÉèÖÃÒý½Å¸´ÓÃ£¬¶ÔÓ¦¹Ü½ÅÓÉGPIO±ä»¯Îª´®¿ÚÍ¨Ñ¶½Ó¿Ú
+		//é€šè¿‡å¯¹SIMå¯„å­˜å™¨çš„è®¾ç½®è®¾ç½®å¼•è„šå¤ç”¨ï¼Œå¯¹åº”ç®¡è„šç”±GPIOå˜åŒ–ä¸ºä¸²å£é€šè®¯æŽ¥å£
 	    SIM->SCGC |=  SIM_SCGC_UART0_MASK;
 	    if (!is_port_remap)
 	    	SIM->PINSEL &= ~SIM_PINSEL_UART0PS_MASK;   //RX--B0 ,TX--B1
 	    else
 	    	SIM->PINSEL |= SIM_PINSEL_UART0PS_MASK;   //PTA3 TX ,PTA2 RX
-	    //TODO:ÒÔÏÂÈýÐÐµÄº¬ÒåÊÇÊ²Ã´£¿ÎªÊ²Ã´UART1ºÍUART2Ã»ÓÐ£¿ÑÐ¾¿Ò»ÏÂ¡£
+	    //TODO:ä»¥ä¸‹ä¸‰è¡Œçš„å«ä¹‰æ˜¯ä»€ä¹ˆï¼Ÿä¸ºä»€ä¹ˆUART1å’ŒUART2æ²¡æœ‰ï¼Ÿç ”ç©¶ä¸€ä¸‹ã€‚
 	    SIM->SOPT0 &= ~SIM_SOPT0_TXDME_MASK ;
 	    SIM->SOPT0 &= ~SIM_SOPT0_RXDFE_MASK ;
 	    SIM->SOPT0 &= ~SIM_SOPT0_RXDCE_MASK ;
@@ -38,14 +38,14 @@ UARTModule::UARTModule(UART_settings::UARTn uartn, bool is_port_remap, uint16_t 
 	case UART_settings::UARTR1:
 	    SIM->SCGC |=  SIM_SCGC_UART1_MASK;
 	    if (!is_port_remap)
-	    	SIM->PINSEL1 &= ~SIM_PINSEL1_UART1PS_MASK;   //X--C6 £»TX--C7
+	    	SIM->PINSEL1 &= ~SIM_PINSEL1_UART1PS_MASK;   //X--C6 ï¼›TX--C7
 	    else
 	    	SIM->PINSEL1 |= SIM_PINSEL1_UART1PS_MASK ;  //PTF3 TX ,PTF2 RX
 	break ;
 	case UART_settings::UARTR2:
 	    SIM->SCGC |=  SIM_SCGC_UART2_MASK;
 	    if (!is_port_remap)
-	      SIM->PINSEL1 &= ~SIM_PINSEL1_UART2PS_MASK;   //RX--D6 £»TX--D7
+	      SIM->PINSEL1 &= ~SIM_PINSEL1_UART2PS_MASK;   //RX--D6 ï¼›TX--D7
 	    else
 	      SIM->PINSEL1 |= SIM_PINSEL1_UART2PS_MASK ;  //PTI1 TX ,PTI0 RX
 	break;

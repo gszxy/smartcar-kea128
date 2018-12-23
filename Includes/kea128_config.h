@@ -201,9 +201,9 @@
     #define TERM_PORT   UART2               /*!< UART2 is used on TRK-KEA128 board */
     /* define SCI port # to be used */
     #define  TERM_PORT              UART2              /*!< UART2 is used on KEA128 EVB board */
-    #define  CORE_CLK_HZ            40000000     //ϵͳʱ��
-    #define  BUS_CLK_HZ             40000000     //bus ʱ��
-    #define  BUS_CLK_KHZ            40000        //bus ʱ��
+    #define  CORE_CLK_HZ            40000000     //系统时钟
+    #define  BUS_CLK_HZ             40000000     //bus 时钟
+    #define  BUS_CLK_KHZ            40000        //bus 时钟
     #define  BUS_CLK_MHZ            40 
     #define  UART_PRINT_BITRATE     9600 
                       

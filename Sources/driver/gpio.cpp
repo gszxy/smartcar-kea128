@@ -1,8 +1,8 @@
 /*
  * gpio.c
  *
- *  Created on: 2018Äê12ÔÂ15ÈÕ
- *      Author: ÕÅĞ¦Óï
+ *  Created on: 2018å¹´12æœˆ15æ—¥
+ *      Author: å¼ ç¬‘è¯­
  */
 
 #include <cstdint>
@@ -13,22 +13,22 @@ volatile GPIO_Type *GPIOx[3]={GPIOA,GPIOB,GPIOC};
 
 GPIOModule::GPIOModule(PTxn port,bool direction_is_output)
 {
-	if (direction_is_output)   //Êä³ö
+	if (direction_is_output)   //è¾“å‡º
 	{
-	    GPIO_PDDR_REG(GPIOX_BASE(port)) |= (1 << PTn(static_cast<uint8_t>(port)));  //ÉèÖÃ¶Ë¿Ú·½ÏòÎªÊä³ö
-	    this->SetState(0);   //µ÷ÓÃgpio_setº¯Êı£¬Éè¶¨Òı½ÅÊä³ö×´Ì¬
+	    GPIO_PDDR_REG(GPIOX_BASE(port)) |= (1 << PTn(static_cast<uint8_t>(port)));  //è®¾ç½®ç«¯å£æ–¹å‘ä¸ºè¾“å‡º
+	    this->SetState(0);   //è°ƒç”¨gpio_setå‡½æ•°ï¼Œè®¾å®šå¼•è„šè¾“å‡ºçŠ¶æ€
 	}
 	else
 	{
-	    GPIO_PDDR_REG(GPIOX_BASE(port)) &= ~(1 << PTn(port));  //ÉèÖÃ¶Ë¿Ú·½ÏòÎªÊäÈë
-	    //GPIO_PIDR_REG(GPIOX_BASE(ptxn)) &= ~(1 << PTn(ptxn));  //ÉèÖÃ¶Ë¿Ú·½ÏòÎªÊäÈë
-	    //ÁúÇñµÄ¿âÀïÎªÊ²Ã´ÒªÁ¬ĞøÉèÖÃÁ½´ÎÄØ£¿ÏÈ×¢ÊÍµôÊÔÊÔÓĞÃ»ÓĞÎÊÌâ¡£
+	    GPIO_PDDR_REG(GPIOX_BASE(port)) &= ~(1 << PTn(port));  //è®¾ç½®ç«¯å£æ–¹å‘ä¸ºè¾“å…¥
+	    //GPIO_PIDR_REG(GPIOX_BASE(ptxn)) &= ~(1 << PTn(ptxn));  //è®¾ç½®ç«¯å£æ–¹å‘ä¸ºè¾“å…¥
+	    //é¾™é‚±çš„åº“é‡Œä¸ºä»€ä¹ˆè¦è¿ç»­è®¾ç½®ä¸¤æ¬¡å‘¢ï¼Ÿå…ˆæ³¨é‡Šæ‰è¯•è¯•æœ‰æ²¡æœ‰é—®é¢˜ã€‚
 	}
 	this->port = port;
 }
 
 GPIOModule::~GPIOModule()
 {
-	//ÏÖÔÚµÄÎö¹¹º¯ÊıËÆºõÃ»Ê²Ã´ºÃ×öµÄÊÂ
+	//ç°åœ¨çš„ææ„å‡½æ•°ä¼¼ä¹æ²¡ä»€ä¹ˆå¥½åšçš„äº‹
 }
 

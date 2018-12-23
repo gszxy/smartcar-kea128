@@ -22,11 +22,11 @@ class InductorSensor
 private:
 	//num_of_adc = 3
 
-public://ÓÉÓÚÖĞ¶Ïº¯ÊıµÄÔµ¹Ê£¬²»µÃ²»°ÑËùÓĞº¯ÊıÈ«²¿±©Â¶Îª¹«ÓĞ
-	   //ÒÔºó¿¼ÂÇÓÃµ¥ÀıÄ£Ê½µÄ·½·¨ÊµÏÖ°ü×°
-	ADCModule *adcm;                      //Êı×é£¬°üº¬¸÷ad×ª»»Æ÷
+public://ç”±äºä¸­æ–­å‡½æ•°çš„ç¼˜æ•…ï¼Œä¸å¾—ä¸æŠŠæ‰€æœ‰å‡½æ•°å…¨éƒ¨æš´éœ²ä¸ºå…¬æœ‰
+	   //ä»¥åè€ƒè™‘ç”¨å•ä¾‹æ¨¡å¼çš„æ–¹æ³•å®ç°åŒ…è£…
+	ADCModule *adcm;                      //æ•°ç»„ï¼ŒåŒ…å«å„adè½¬æ¢å™¨
 	volatile InductorData *inductor_data;
-	volatile uint8_t current_adc_m;       //ÕıÔÚ½øĞĞ×ª»»µÄadcÄ£¿é
+	volatile uint8_t current_adc_m;       //æ­£åœ¨è¿›è¡Œè½¬æ¢çš„adcæ¨¡å—
 	volatile bool sys_has_ongoing_convert = false;
 	InductorSensor();
 	~InductorSensor();

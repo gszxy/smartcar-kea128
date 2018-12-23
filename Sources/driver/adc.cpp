@@ -4,7 +4,7 @@
 #include <cassert>
 using namespace std;
 /*
- * ��Ц�� 2018��12��8r�� ��д
+ * 张笑语 2018年12月8r日 编写
  */
 /*
 ADC_CHANNEL_AD0 -------------- A0   
@@ -31,67 +31,67 @@ UARTR2:PTI1 TX ,PTI0 RX
 uint32_t ADCModule::chn_occupation_flag = 0;
 
 int8_t ADCModule::StartConversion(uint8_t count)
-{//count:����ת��count��ȡƽ��ֵ��ֻ����1-8��Χ�ڵ�ֵ
-	if(ADCModule::GetIsConversionOngoing())//����������ڽ��е�ת��û�����
-		return -1;//���ش�����-1
-//	if(ADC->SC1 & ADC_SC1_COCO_MASK )//����Ѿ�����ɵ�ת��������û�б���ȡ
-//		return -2;//���ش�����-2
-	this->channel_active = true;//��ǰͨ����Ծ
+{//count:连续转换count次取平均值。只允许1-8范围内的值
+	if(ADCModule::GetIsConversionOngoing())//如果存在正在进行的转换没有完成
+		return -1;//返回错误码-1
+//	if(ADC->SC1 & ADC_SC1_COCO_MASK )//如果已经有完成的转换，但是没有被读取
+//		return -2;//返回错误码-2
+	this->channel_active = true;//当前通道活跃
 	this->active_convert_count = count;
 
 	ADC->SC3  = (0
-		|ADC_SC3_ADICLK(BUS_CLOCK)   //ѡ��ϵͳʱ��
-		|ADC_SC3_MODE(this->bit)      //ADλ��
-		//|ADC_SC3_ADLSMP_MASK         //�͹��Ĳɼ�
-		|ADC_SC3_ADIV(ADC_ADIV_1)      //��ƵΪ1
-		//|ADC_SC3_ADLPC_MASK            //������ʱ��
+		|ADC_SC3_ADICLK(BUS_CLOCK)   //选择系统时钟
+		|ADC_SC3_MODE(this->bit)      //AD位数
+		//|ADC_SC3_ADLSMP_MASK         //低功耗采集
+		|ADC_SC3_ADIV(ADC_ADIV_1)      //分频为1
+		//|ADC_SC3_ADLPC_MASK            //长步长时间
 	) ;
 	ADC->SC2  = (0
-	// |ADC_SC2_ADTRG_MASK             //1Ӳ������,0��������
-	//  |ADC_SC2_ACFE_MASK            //�ɼ��Ƚ�
-	                    //  |ADC_SC2_ACFGT_MASK           //���ڱȽ�ֵ���Ƚϴ���
+	// |ADC_SC2_ADTRG_MASK             //1硬件触发,0软件触发
+	//  |ADC_SC2_ACFE_MASK            //采集比较
+	                    //  |ADC_SC2_ACFGT_MASK           //大于比较值，比较触发
 	                    ) ;
 	ADC->APCTL1 = ADC_APCTL1_ADPC(1<< this->channel) ;
     ADC->SC4 =(0
-    	|ADC_SC4_AFDEP(7) //FIFO���
+    	|ADC_SC4_AFDEP(7) //FIFO深度
     );
-    //��FIFO����ѭ������count��ADC����FIFO�ʹ˴�������Ӣ�İ��û��ֲ�344ҳ�����İ�326ҳ
+    //向FIFO队列循环发送count次ADC请求，FIFO和此处操作见英文版用户手册344页或中文版326页
     for(int8_t i=1;i<=count;i++)
 	{
     	ADC->SC1  = (0
-    			|ADC_SC1_ADCH(this->channel)             //ѡ��ɼ�ͨ��
-				// |ADC_SC1_ADCO_MASK            //�����ɼ�
-			    //|ADC_SC1_AIEN_MASK           //�ж�
+    			|ADC_SC1_ADCH(this->channel)             //选择采集通道
+				// |ADC_SC1_ADCO_MASK            //连续采集
+			    //|ADC_SC1_AIEN_MASK           //中断
     	) ;
 	}
 
     return 0;
 }
 
-ADCModule::ADCModule(ADCHn channel/*ADCת����ͨ��*/,ADC_nbit bit/*ADCת����λ����֧��8��10��12λ*/)//���캯��
+ADCModule::ADCModule(ADCHn channel/*ADC转换的通道*/,ADC_nbit bit/*ADC转换的位数，支持8，10，12位*/)//构造函数
 {
-	//�����
+	//存参数
 	this->channel = channel;
 	this->bit = bit;
-	//����ʹ�ã��ñ�־
+	//可以使用，置标志
 	uint32_t mask = (1<<(int)channel);
 	ADCModule::chn_occupation_flag |= mask;
 
-	SIM->SCGC |= SIM_SCGC_ADC_MASK;   //ΪADC�ṩʱ��Դ
+	SIM->SCGC |= SIM_SCGC_ADC_MASK;   //为ADC提供时钟源
 }
 
-ADCModule::~ADCModule()//��������
+ADCModule::~ADCModule()//析构函数
 {
-	//�Ƴ�ͨ��ռ�ñ�־λ
+	//移除通道占用标志位
 	uint32_t mask = (1<<(int)channel);
-	this->chn_occupation_flag ^= mask; //��λ���Ȼ��ֵ������Ӧ��־λ���㣬���಻��
+	this->chn_occupation_flag ^= mask; //按位异或然后赋值，将对应标志位清零，其余不变
 }
 
 uint16_t ADCModule::TryFetchResult()
 {
-	//if(!this->channel_active)//ͨ��δ���˵����ǰ��ŵĽ��Ҫô�����ڣ�Ҫô�����ڴ�ͨ��
-	//	return 0xFFFF;//����ת�����12λ��������ֲ����ܳ��֡��������롣
-	if(!(ADC->SC1 & ADC_SC1_COCO_MASK))//ת��δ���
+	//if(!this->channel_active)//通道未激活，说明当前存放的结果要么不存在，要么不属于此通道
+	//	return 0xFFFF;//正常转换最多12位，这个数字不可能出现。作错误码。
+	if(!(ADC->SC1 & ADC_SC1_COCO_MASK))//转换未完成
 		return 0xFFFE;
 	int16_t sum = 0;
 
@@ -99,7 +99,7 @@ uint16_t ADCModule::TryFetchResult()
 	{
 		sum += ADC->R;
 	}
-	return sum / this->active_convert_count;//����ƽ��ֵ
+	return sum / this->active_convert_count;//返回平均值
 }
 
 

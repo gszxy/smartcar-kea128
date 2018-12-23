@@ -1,8 +1,8 @@
 /*
  * ftm.cpp
  *
- *  Created on: 2018Äê12ÔÂ22ÈÕ
- *      Author: ÕÅÐ¦Óï
+ *  Created on: 2018å¹´12æœˆ22æ—¥
+ *      Author: å¼ ç¬‘è¯­
  */
 
 #include "ftm.h"
@@ -12,12 +12,12 @@
 using namespace std;
 using namespace FTMSettings;
 
-//Êý×é£¬ÓÃÓÚ¿ØÖÆ¼Ä´æÆ÷Ñ°Ö·
+//æ•°ç»„ï¼Œç”¨äºŽæŽ§åˆ¶å¯„å­˜å™¨å¯»å€
 FTM_Type * FTMx[3] = { FTM0,FTM1,FTM2};
 
 FlexTimerModule::FlexTimerModule(FTMSettings::Modules module,FTMSettings::Channels channel,FTMSettings::PortRemapType port_remap_type)
 {
-	  //Ê×ÏÈÏòÄ£¿éÒýÈëÊ±ÖÓÐÅºÅ
+	  //é¦–å…ˆå‘æ¨¡å—å¼•å…¥æ—¶é’Ÿä¿¡å·
 	  switch(module)
 	  {
 	  case mFTM0:
@@ -32,53 +32,53 @@ FlexTimerModule::FlexTimerModule(FTMSettings::Modules module,FTMSettings::Channe
 	  }
 
 	  this->PinSet(module,channel,port_remap_type);
-	  //µ÷ÓÃº¯ÊýÉèÖÃ¶ÔÓ¦µÄÍ¨µÀºÍÒý½Å
+	  //è°ƒç”¨å‡½æ•°è®¾ç½®å¯¹åº”çš„é€šé“å’Œå¼•è„š
 	  FTMx[module]->SC = 0 ;
 	  FTMx[module]->CONTROLS[channel].CnSC = 0 ;
-	  //Ê×ÏÈÇå¿ÕÄ£¿éºÍÍ¨µÀµÄ¼Ä´æÆ÷£¬¼´ÖØÖÃÕû¸öPWMÊä³ö¹¦ÄÜ
-	  //ÏÂÃæÉèÖÃÍ¨µÀµÄ¿ØÖÆ¼Ä´æÆ÷CnSc¡£ËüÉèÖÃÁËÒ»¸ö±ßÑØ¶ÔÆë£¬Õý¼«ÐÔPWM£¬Ïê¼ûÓÃ»§ÊÖ²á379Ò³±í26-69£¨ÒÔÏÂ¸÷Î»µÄÕæÖµ±í£©
+	  //é¦–å…ˆæ¸…ç©ºæ¨¡å—å’Œé€šé“çš„å¯„å­˜å™¨ï¼Œå³é‡ç½®æ•´ä¸ªPWMè¾“å‡ºåŠŸèƒ½
+	  //ä¸‹é¢è®¾ç½®é€šé“çš„æŽ§åˆ¶å¯„å­˜å™¨CnScã€‚å®ƒè®¾ç½®äº†ä¸€ä¸ªè¾¹æ²¿å¯¹é½ï¼Œæ­£æžæ€§PWMï¼Œè¯¦è§ç”¨æˆ·æ‰‹å†Œ379é¡µè¡¨26-69ï¼ˆä»¥ä¸‹å„ä½çš„çœŸå€¼è¡¨ï¼‰
 	  FTMx[module]->CONTROLS[channel].CnSC |= (0
 	                                  //   |FTM_CnSC_ELSA_MASK
-	                                       |FTM_CnSC_ELSB_MASK  //¸ßµçÆ½ÓÐÐ§Âö³å£¬¼ÆÊýÆ÷´ïµ½match(CnV)Ö®ºóÊä³öµÍµçÆ½
+	                                       |FTM_CnSC_ELSB_MASK  //é«˜ç”µå¹³æœ‰æ•ˆè„‰å†²ï¼Œè®¡æ•°å™¨è¾¾åˆ°match(CnV)ä¹‹åŽè¾“å‡ºä½Žç”µå¹³
 	                                  //   |FTM_CnSC_MSA_MASK
-	                                       |FTM_CnSC_MSB_MASK   //±ßÔµ¶ÔÆëPWM
-	                                  //   |FTM_CnSC_CHIE_MASK  //²»¿ªÖÐ¶Ï
-	                                  //   |FTM_CnSC_CHF_MASK   //²»ÖØÖÃ±êÖ¾Î»
+	                                       |FTM_CnSC_MSB_MASK   //è¾¹ç¼˜å¯¹é½PWM
+	                                  //   |FTM_CnSC_CHIE_MASK  //ä¸å¼€ä¸­æ–­
+	                                  //   |FTM_CnSC_CHF_MASK   //ä¸é‡ç½®æ ‡å¿—ä½
 	                                       );
 	  FTMx[module]->SC &= ~FTM_SC_CPWMS_MASK;
-	  //ÒÔÉÏÉèÖÃ¹æ¶¨¼ÆÊýÆ÷ÏòÉÏ¼ÆÊý£¬¶ø²»ÊÇ¼Ó¼õÀ´»Ø¼ÆÊý¡£
+	  //ä»¥ä¸Šè®¾ç½®è§„å®šè®¡æ•°å™¨å‘ä¸Šè®¡æ•°ï¼Œè€Œä¸æ˜¯åŠ å‡æ¥å›žè®¡æ•°ã€‚
 
-	  //½«Ä£¿éºÍÍ¨µÀÐÅÏ¢±£´æÖÁ³ÉÔ±±äÁ¿
+	  //å°†æ¨¡å—å’Œé€šé“ä¿¡æ¯ä¿å­˜è‡³æˆå‘˜å˜é‡
 	  this->channel = channel;
 	  this->module = module;
 
-	  //ÎÒÃÇ»¹Ã»ÓÐÉèÖÃPWMÄ£¿éµÄ¼ÆÊýÊ±ÖÓÔ´£¬Òò´ËÏÖÔÚ»¹²»»á¿ªÊ¼Êä³öPWM²¨ÐÎ
+	  //æˆ‘ä»¬è¿˜æ²¡æœ‰è®¾ç½®PWMæ¨¡å—çš„è®¡æ•°æ—¶é’Ÿæºï¼Œå› æ­¤çŽ°åœ¨è¿˜ä¸ä¼šå¼€å§‹è¾“å‡ºPWMæ³¢å½¢
 }
 
 void FlexTimerModule::SetPWMParam(uint32_t frequency,uint32_t duty_cycle)
 {
 	uint32_t sys_clk = SystemCoreClock;
-	//SystemCoreClockÊÇ¶¨ÒåÔÚsystem_SKEAZ1284.hÖÐµÄÈ«¾Ö±äÁ¿
+	//SystemCoreClockæ˜¯å®šä¹‰åœ¨system_SKEAZ1284.hä¸­çš„å…¨å±€å˜é‡
 	bool freq_is_supported = ( (sys_clk >> (16+2) ) < frequency) && ((sys_clk >> 2) > frequency);
-	//FTM¼ÆÊýÆ÷µÄ¿í¶ÈÎª16Î»£»ÎÒÃÇÊ¹ÓÃµÄ¼ÆÊýÊ±ÖÓÐÅºÅÎªÏµÍ³Ê±ÖÓµÄ4·ÖÆµ£¬¼´10MHz£¨ÔÚEnablePWMOutputº¯ÊýÖÐÉèÖÃ£©
-	//16¶ÔÓ¦16Î»¼Ä´æÆ÷£¬2¶ÔÓ¦4·ÖÆµ£¬¼´2µÄ2´Î·½¡£ÏµÍ³Ê±ÖÓµÄ20·ÖÆµ±ãÊÇPWMÄ£¿éÔÊÐíÊä³öµÄ×îµÍÆµÂÊ,4·ÖÆµ±ãÊÇÏµÍ³µÄ×î´óÔÊÐíÆµÂÊ
-	//¼ÆÊýÆ÷¿ªÊ¼¼ÆÊýÊ±£¬Îª¸ßµçÆ½
-	//¼ÆÊýÖµ´ïµ½modÊ±£¬µçÆ½×ª»»¡£¸ù¾ÝÎÒÃÇÔÚ¹¹Ôìº¯ÊýÖÐµÄÉèÖÃ£¬´ËÊ±ÓÉ¸ßµçÆ½×ª»»ÎªµÍµçÆ½¡£
-	//¼ÆÊýÆ÷µ½´ïÂúÖµÊ±£¬ÖØÖÃ»ØÁã£¬µçÆ½×ª»»¡£
+	//FTMè®¡æ•°å™¨çš„å®½åº¦ä¸º16ä½ï¼›æˆ‘ä»¬ä½¿ç”¨çš„è®¡æ•°æ—¶é’Ÿä¿¡å·ä¸ºç³»ç»Ÿæ—¶é’Ÿçš„4åˆ†é¢‘ï¼Œå³10MHzï¼ˆåœ¨EnablePWMOutputå‡½æ•°ä¸­è®¾ç½®ï¼‰
+	//16å¯¹åº”16ä½å¯„å­˜å™¨ï¼Œ2å¯¹åº”4åˆ†é¢‘ï¼Œå³2çš„2æ¬¡æ–¹ã€‚ç³»ç»Ÿæ—¶é’Ÿçš„20åˆ†é¢‘ä¾¿æ˜¯PWMæ¨¡å—å…è®¸è¾“å‡ºçš„æœ€ä½Žé¢‘çŽ‡,4åˆ†é¢‘ä¾¿æ˜¯ç³»ç»Ÿçš„æœ€å¤§å…è®¸é¢‘çŽ‡
+	//è®¡æ•°å™¨å¼€å§‹è®¡æ•°æ—¶ï¼Œä¸ºé«˜ç”µå¹³
+	//è®¡æ•°å€¼è¾¾åˆ°modæ—¶ï¼Œç”µå¹³è½¬æ¢ã€‚æ ¹æ®æˆ‘ä»¬åœ¨æž„é€ å‡½æ•°ä¸­çš„è®¾ç½®ï¼Œæ­¤æ—¶ç”±é«˜ç”µå¹³è½¬æ¢ä¸ºä½Žç”µå¹³ã€‚
+	//è®¡æ•°å™¨åˆ°è¾¾æ»¡å€¼æ—¶ï¼Œé‡ç½®å›žé›¶ï¼Œç”µå¹³è½¬æ¢ã€‚
 	if(!freq_is_supported)
 	{
 		return;
-		//TODO:ÊµÏÖ´íÎóÌáÊ¾
+		//TODO:å®žçŽ°é”™è¯¯æç¤º
 	}
-	//ÊÂÊµÉÏ£¬¼´Ê¹¿ÉÒÔÖ§³Ö£¬Ì«µÍµÄÆµÂÊÒ²Ã»ÓÐÈÎºÎÒâÒå¡£ÕâÑù×öµÄÄ¿µÄÖ»ÊÇÎªÁËÏÂÃæµÄ¼ÆËã²»Òª³öÏÖÒç³öºÍ·Ç·¨Êý¾Ý¡£
+	//äº‹å®žä¸Šï¼Œå³ä½¿å¯ä»¥æ”¯æŒï¼Œå¤ªä½Žçš„é¢‘çŽ‡ä¹Ÿæ²¡æœ‰ä»»ä½•æ„ä¹‰ã€‚è¿™æ ·åšçš„ç›®çš„åªæ˜¯ä¸ºäº†ä¸‹é¢çš„è®¡ç®—ä¸è¦å‡ºçŽ°æº¢å‡ºå’Œéžæ³•æ•°æ®ã€‚
 	uint16_t counter_max_value = (uint16_t)((sys_clk >> 2) / frequency) ;
 	uint16_t chn_match_value = (uint16_t)((duty_cycle * (counter_max_value - 0 + 1)) / 10000);
-	//¼ÆÊýÆ÷¼ÆÊýµÄ×ÜÖµÊÇ  ×î´óÖµ-³õÖµ+1£¬ÆäÖÐ0ÊÇ³õÖµ£¨¿ÉÒÔ¸ÄµÄ£©
-	//ÒÑ¾­¶¨ÒåÁËÕ¼¿Õ±ÈÊÇduty_cycle³ýÒÔ1Íò£¬Òò´Ë¿ÉÒÔ¼ÆËã³öµçÆ½·­×ªÊ±¼ÆÊýÆ÷µÄÖµ
+	//è®¡æ•°å™¨è®¡æ•°çš„æ€»å€¼æ˜¯  æœ€å¤§å€¼-åˆå€¼+1ï¼Œå…¶ä¸­0æ˜¯åˆå€¼ï¼ˆå¯ä»¥æ”¹çš„ï¼‰
+	//å·²ç»å®šä¹‰äº†å ç©ºæ¯”æ˜¯duty_cycleé™¤ä»¥1ä¸‡ï¼Œå› æ­¤å¯ä»¥è®¡ç®—å‡ºç”µå¹³ç¿»è½¬æ—¶è®¡æ•°å™¨çš„å€¼
 	FTMx[this->module]->MOD = counter_max_value ;
 	FTMx[this->module]->CONTROLS[this->channel].CnV = chn_match_value  ;
-	//×¢Òâµ½Õ¼¿Õ±ÈÊÇÓÉÃ¿¸öÍ¨µÀµÄ¼Ä´æÆ÷¾ö¶¨µÄ£¬Òò´ËÒ»¸öFTMÄ£¿éµÄ¸÷¸öÍ¨µÀ¿ÉÒÔÊä³ö²»Í¬µÄÕ¼¿Õ±È
-	//ÎÒÃÇÈÔÎ´ÒýÈë¼ÆÊýÊ±ÖÓÐÅºÅ£¬Òò´Ë´ËÊ±¼ÆÊýÆ÷ÈÔÈ»²»»á¿ªÊ¼¼ÆÊý
+	//æ³¨æ„åˆ°å ç©ºæ¯”æ˜¯ç”±æ¯ä¸ªé€šé“çš„å¯„å­˜å™¨å†³å®šçš„ï¼Œå› æ­¤ä¸€ä¸ªFTMæ¨¡å—çš„å„ä¸ªé€šé“å¯ä»¥è¾“å‡ºä¸åŒçš„å ç©ºæ¯”
+	//æˆ‘ä»¬ä»æœªå¼•å…¥è®¡æ•°æ—¶é’Ÿä¿¡å·ï¼Œå› æ­¤æ­¤æ—¶è®¡æ•°å™¨ä»ç„¶ä¸ä¼šå¼€å§‹è®¡æ•°
 }
 
 void FlexTimerModule::PinSet(FTMSettings::Modules module,FTMSettings::Channels channel,FTMSettings::PortRemapType port_remap_type)
@@ -86,7 +86,7 @@ void FlexTimerModule::PinSet(FTMSettings::Modules module,FTMSettings::Channels c
 	  switch(module)
 	  {
 	  case mFTM0:
-	    if (channel==FTM_CH0)                        //FTMÄ£¿é1
+	    if (channel==FTM_CH0)                        //FTMæ¨¡å—1
 	    {
 	      if (port_remap_type == FTMSettings::remap_none)
 	        SIM->PINSEL &=~SIM_PINSEL_FTM0PS0_MASK ;  // PWM0 PTA0
@@ -106,7 +106,7 @@ void FlexTimerModule::PinSet(FTMSettings::Modules module,FTMSettings::Channels c
 	    if (channel==FTM_CH0)
 	    {
 	      if (port_remap_type == FTMSettings::remap_none)
-	        SIM->PINSEL &= ~SIM_PINSEL_FTM1PS0_MASK ;  // PWM0 PTC4 £¨JTAG£©
+	        SIM->PINSEL &= ~SIM_PINSEL_FTM1PS0_MASK ;  // PWM0 PTC4 ï¼ˆJTAGï¼‰
 	      else
 	        SIM->PINSEL |= SIM_PINSEL_FTM1PS0_MASK ;  // PWM0 PTH2
 	    }

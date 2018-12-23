@@ -1,10 +1,10 @@
 /*
  * communicate.h
  *
- *  Created on: 2018Äê12ÔÂ15ÈÕ
- *      Author: ÕÅĞ¦Óï
+ *  Created on: 2018å¹´12æœˆ15æ—¥
+ *      Author: å¼ ç¬‘è¯­
  *
- *      µ¥Æ¬»úÓëÆäËüÉè±¸£¨Ö÷ÒªÊÇPC»ú£©½øĞĞÍ¨Ñ¶µÄ·½·¨
+ *      å•ç‰‡æœºä¸å…¶å®ƒè®¾å¤‡ï¼ˆä¸»è¦æ˜¯PCæœºï¼‰è¿›è¡Œé€šè®¯çš„æ–¹æ³•
  */
 
 #ifndef INCLUDES_COMMUNICATE_H_
@@ -21,19 +21,19 @@
 
 
 class UARTCommunicator
-{//TODO:ÊµÏÖprintf
-private://Ñ­»·»º³åÇø
+{//TODO:å®ç°printf
+private://å¾ªç¯ç¼“å†²åŒº
 
 	uint8_t rxbufferlen;
 	volatile uint8_t *rxbuffer;
-	volatile uint8_t *rxb_head_ptr;//headÊÇ»º³åÇøÄÚµÚÒ»¸ö×Ö·ûµÄµØÖ·
-	volatile uint8_t *rxb_tail_ptr;//tailÊÇÑ­»·»º³åÇøÄÚ×îºóÒ»¸ö×Ö·ûµÄµØÖ·+1
+	volatile uint8_t *rxb_head_ptr;//headæ˜¯ç¼“å†²åŒºå†…ç¬¬ä¸€ä¸ªå­—ç¬¦çš„åœ°å€
+	volatile uint8_t *rxb_tail_ptr;//tailæ˜¯å¾ªç¯ç¼“å†²åŒºå†…æœ€åä¸€ä¸ªå­—ç¬¦çš„åœ°å€+1
 	volatile uint8_t txbufferlen;
 	volatile uint8_t *txbuffer;
 	volatile uint8_t *txb_head_ptr;
 	volatile uint8_t *txb_tail_ptr;
 	inline void DisableNVICIntr()
-	{//ÔÚÖĞ¶Ï¿ØÖÆÆ÷³öÆÁ±ÎÓëµ±Ç°Í¨µÀÓĞ¹ØµÄÖĞ¶Ï
+	{//åœ¨ä¸­æ–­æ§åˆ¶å™¨å‡ºå±è”½ä¸å½“å‰é€šé“æœ‰å…³çš„ä¸­æ–­
 		switch(this->uart->GetChannel())
 		{
 		case UART_settings::UARTR0:
@@ -48,7 +48,7 @@ private://Ñ­»·»º³åÇø
 		}
 	}
 	inline void EnableNVICIntr()
-	{//ÔÚÖĞ¶Ï¿ØÖÆÆ÷³öÆÁ±ÎÓëµ±Ç°Í¨µÀÓĞ¹ØµÄÖĞ¶Ï
+	{//åœ¨ä¸­æ–­æ§åˆ¶å™¨å‡ºå±è”½ä¸å½“å‰é€šé“æœ‰å…³çš„ä¸­æ–­
 		switch(this->uart->GetChannel())
 		{
 		case UART_settings::UARTR0:
@@ -67,25 +67,25 @@ protected:
 public:
 	UARTCommunicator(uint8_t rx_bufferlen,uint8_t tx_bufferlen,UART_settings::UARTn uartn,bool is_port_remap,uint16_t baud_rate);
 	~UARTCommunicator();
-	void SendString(char *buffer,uint8_t length/*³¤¶È°üÀ¨ÖÕ½á×Ö·û\0*/);
+	void SendString(char *buffer,uint8_t length/*é•¿åº¦åŒ…æ‹¬ç»ˆç»“å­—ç¬¦\0*/);
 	void SendChar(char send);
 	//uint8_t* GetString();
-	//TODO: ÊµÏÖGetString()
+	//TODO: å®ç°GetString()
 	uint8_t GetChar();
 	uint8_t PeekChar();
     void CleanRxBuffer();
 
 
-	/*..............ÓÉÖĞ¶Ï´¦Àíº¯Êıµ÷ÓÃ£¬ÔÚ·¢ËÍ»º³åÇø¿ÕÊ±·¢ËÍÏÂÒ»¸ö×Ö·û.............*/
+	/*..............ç”±ä¸­æ–­å¤„ç†å‡½æ•°è°ƒç”¨ï¼Œåœ¨å‘é€ç¼“å†²åŒºç©ºæ—¶å‘é€ä¸‹ä¸€ä¸ªå­—ç¬¦.............*/
     void OnIntrSendNext();
-	/*..............ÓÉÖĞ¶Ï´¦Àíº¯Êıµ÷ÓÃ£¬ÔÚ½ÓÊÕ»º³åÇøÂúÊ±¶ÁÈ¡ÏÂÒ»¸ö×Ö·û.............*/
+	/*..............ç”±ä¸­æ–­å¤„ç†å‡½æ•°è°ƒç”¨ï¼Œåœ¨æ¥æ”¶ç¼“å†²åŒºæ»¡æ—¶è¯»å–ä¸‹ä¸€ä¸ªå­—ç¬¦.............*/
     void OnIntrRecieveNext();
-    /*ÖĞ¶Ï´¦Àíº¯Êı¼ûintr.h*/
+    /*ä¸­æ–­å¤„ç†å‡½æ•°è§intr.h*/
 
 
 };
 
-/*..Õâ¸öÊı×é°üÀ¨ÒÑ¾­»ñÃ»ÓĞ³õÊ¼»¯µÄÈı¸öÍ¨µÀ¶ÔÓ¦µÄthisÖ¸Õë¡£Ìá¹©¸øÖĞ¶Ï´¦Àíº¯ÊıÊ¹ÓÃ..*/
+/*..è¿™ä¸ªæ•°ç»„åŒ…æ‹¬å·²ç»è·æ²¡æœ‰åˆå§‹åŒ–çš„ä¸‰ä¸ªé€šé“å¯¹åº”çš„thisæŒ‡é’ˆã€‚æä¾›ç»™ä¸­æ–­å¤„ç†å‡½æ•°ä½¿ç”¨..*/
 extern UARTCommunicator *cmtr_uart[];
 
 
