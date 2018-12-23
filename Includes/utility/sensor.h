@@ -11,7 +11,7 @@
 struct InductorData
 {
 	volatile bool flag_data_updated;
-	volatile uint16_t values[6];
+	volatile uint16_t values[3];
 };
 
 

@@ -59,7 +59,7 @@ FTM2_CH5      PTB5         PTG7
 请注意不同模块可用的通道数目不同
 */
 
-FTM_Type * FTMx[3] = { FTM0,FTM1,FTM2};
+extern FTM_Type * FTMx[];
 
 class FlexTimerModule
 {
@@ -82,8 +82,8 @@ public:
 	{
 		FTMx[this->module]->CNT = 0;
 		//向计数器内写入任意值，重置为CNTIN中给定的初始值。修改0为其他数不能改变计数器初值！
-		FTMx[this->module]->SC = FTM_SC_CLKS(1)|FTM_SC_PS(4) ;
-		//FTM_SC_CLKS：向模块提供系统时钟，16分频  2.5MHz
+		FTMx[this->module]->SC = FTM_SC_CLKS(1)|FTM_SC_PS(2) ;
+		//FTM_SC_CLKS：向模块提供系统时钟，4分频  10MHz
 	}
 	inline void DisablePWMOutput()
 	{

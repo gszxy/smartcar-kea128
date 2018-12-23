@@ -13,7 +13,7 @@ using namespace std;
 using namespace FTMSettings;
 
 //数组，用于控制寄存器寻址
-
+FTM_Type * FTMx[3] = { FTM0,FTM1,FTM2};
 
 FlexTimerModule::FlexTimerModule(FTMSettings::Modules module,FTMSettings::Channels channel,FTMSettings::PortRemapType port_remap_type)
 {
@@ -59,9 +59,9 @@ void FlexTimerModule::SetPWMParam(uint32_t frequency,uint32_t duty_cycle)
 {
 	uint32_t sys_clk = SystemCoreClock;
 	//SystemCoreClock是定义在system_SKEAZ1284.h中的全局变量
-	bool freq_is_supported = ( (sys_clk >> (16+4) ) > frequency) && ((sys_clk >> 4) < frequency);
-	//FTM计数器的宽度为16位；我们使用的计数时钟信号为系统时钟的16分频，即2.5MHz（在EnablePWMOutput函数中设置）
-	//16对应16位寄存器，4对应16分频，即2的四次方。系统时钟的20分频便是PWM模块允许输出的最低频率,4分频便是系统的最大允许频率
+	bool freq_is_supported = ( (sys_clk >> (16+2) ) < frequency) && ((sys_clk >> 2) > frequency);
+	//FTM计数器的宽度为16位；我们使用的计数时钟信号为系统时钟的4分频，即10MHz（在EnablePWMOutput函数中设置）
+	//16对应16位寄存器，2对应4分频，即2的2次方。系统时钟的20分频便是PWM模块允许输出的最低频率,4分频便是系统的最大允许频率
 	//计数器开始计数时，为高电平
 	//计数值达到mod时，电平转换。根据我们在构造函数中的设置，此时由高电平转换为低电平。
 	//计数器到达满值时，重置回零，电平转换。
@@ -71,8 +71,8 @@ void FlexTimerModule::SetPWMParam(uint32_t frequency,uint32_t duty_cycle)
 		//TODO:实现错误提示
 	}
 	//事实上，即使可以支持，太低的频率也没有任何意义。这样做的目的只是为了下面的计算不要出现溢出和非法数据。
-	uint16_t counter_max_value = (uint16_t)(sys_clk >> 4) / frequency ;
-	uint16_t chn_match_value = (uint16_t)(duty_cycle * (counter_max_value - 0 + 1)) / 10000;
+	uint16_t counter_max_value = (uint16_t)((sys_clk >> 2) / frequency) ;
+	uint16_t chn_match_value = (uint16_t)((duty_cycle * (counter_max_value - 0 + 1)) / 10000);
 	//计数器计数的总值是  最大值-初值+1，其中0是初值（可以改的）
 	//已经定义了占空比是duty_cycle除以1万，因此可以计算出电平翻转时计数器的值
 	FTMx[this->module]->MOD = counter_max_value ;

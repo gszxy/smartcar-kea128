@@ -6,6 +6,7 @@
 #include "glb_var.h"
 #include "UART.h"
 #include "core_cm0plus.h"
+#include "ftm.h"
 using namespace std;
 
 
@@ -22,6 +23,12 @@ int _cppmain()
 	StateMachine *fsm = new StateMachine();
 	char msg[] = "startup\n";
 	g_uartc->SendString(msg,9);
+
+	//测试PWM输出
+	FlexTimerModule *ftm_m2ch0 = new FlexTimerModule(FTMSettings::mFTM2,FTMSettings::FTM_CH0,FTMSettings::remap_first);
+	ftm_m2ch0->SetPWMParam(2000,5000);
+	ftm_m2ch0->EnablePWMOutput();
+	//PWM输出设置结束
 	while(1)//程序主循环
 	{
 		/*............检查通讯区是否有相应命令到达............*/
