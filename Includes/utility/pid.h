@@ -26,10 +26,10 @@ public:
 	PIDController(uint32_t p,uint32_t i,uint32_t d);
 	/*
 	 * PID控制主算法函数
-	 * 输入量：误差。须在外部使用提线算法编写完成，获得误差后调用函数。
+	 * 输入量：误差。须在外部使用各算法编写完成，获得误差后调用函数。
 	 * 输出量:一个0-10000的数，用于控制PWM波的占空比
 	 */
-	uint16_t GetControlOutput(uint32_t error);
+	uint16_t GetControlOutput(int32_t error);
 	void SetParameters(uint16_t p = 1900,uint16_t i = 0,uint16_t d = 70);//参数单位：万分之一
 };
 
@@ -37,17 +37,42 @@ class AngleController : private PIDController
 {
 private:
 /*historical data begins*/
-	uint16_t left_max;
-	uint16_t left_min;
-	uint16_t mid_max;
-	uint16_t mid_min;
-	uint16_t right_max;
-	uint16_t right_min;
+	uint16_t maxes[3];
+	uint16_t mins[3];
 /*historical data ends*/
 public:
-	void DoControl(InductorData *data);
+	/*
+	 * 舵机提线算法函数
+	 * 提供归一化功能
+	 */
+	AngleController()
+	{
+		PIDController(0,0,0);
+		SetParameters();
+	}
+	int32_t DoControl(InductorData *data);
+	inline void SetParameters(uint16_t p,uint16_t i,uint16_t d )
+	{
+		PIDController::SetParameters(p,i,d);
+	}
 };
 
-extern AngleController *angle_controller;
+static class wAngleController    //角度控制类的单例模式包装
+{
+private:
+	static AngleController *ac = nullptr;
+	static inline void acInit()
+	{
+		*ac = new AngleController();
+	}
+public:
+	static inline void GetAngleController()
+	{
+		if(ac == nullptr)
+			acInit();
+		return ac;
+	}
+};
+
 
 #endif /* INCLUDES_UTILITY_PID_H_ */

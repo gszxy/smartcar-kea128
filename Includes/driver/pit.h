@@ -12,7 +12,7 @@
 #include "system_SKEAZ1284.h"
 #include "SKEAZ1284.h"
 
-namespace PITsettings
+namespace PITSettings
 {
 	enum Channel
 	{
@@ -26,7 +26,7 @@ class PeriodicInterruptTimer
 private:
 	PITsettings::Channel channel;
 public:
-	PeriodicInterruptTimer(PITsettings::Channel channel);
+	PeriodicInterruptTimer(PITSettings::Channel channel);
 	inline void SetPeriod(uint32_t period_in_us)
 	{
 		PIT->CHANNEL[channel].LDVAL  = period_in_us * (SystemCoreClock/1000000);
@@ -42,6 +42,24 @@ public:
 	~PeriodicInterruptTimer()
 	{
 		this->DisableIntr();
+	}
+};
+
+
+static class wPIT    //对pit类进行单例模式包装
+{//暂时只对外提供对CH0的支持，待弄清各通道相互作用之后再添加另一个通道
+private:
+	static PeriodicInterruptTimer *pit_ch0 = nullptr;
+	static inline void PITch0Init()
+	{
+		pit_ch0 = new PeriodicInterruptTimer(PITSettings::channel_0);
+	}
+public:
+	static inline PeriodicInterruptTimer GetPitch0()
+	{
+		if(pit_ch0 == nullptr)
+			PITch0Init();
+		return pit_ch0;
 	}
 };
 

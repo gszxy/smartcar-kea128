@@ -6,8 +6,9 @@
  */
 
 #include <cstdint>
+#include <cmath>
 #include "pid.h"
-
+#include "sensor.h"
 
 /*
  * PIDController Member functions
@@ -48,4 +49,38 @@ uint16_t PIDController::GetControlOutput(int32_t error)
 	int32_t final = (diff + proportion + integration)/10000;
 	return (uint16_t)(5000+final);
 	//TODO:增加保护性截断功能，防止舵机超出允许范围
+}
+
+
+/*
+ * SteerController Member functions
+ */
+
+int32_t AngleController::DoControl(InductorData *data)
+{
+	//data[0 1 2]分别是左、中、右电感的值
+	//下面进行归一化
+	//将其归一化为一个0-10000的值
+	uint16_t standard_value[3];
+	for(int i=0;i<3;i++)
+	{
+		if(data[i]<mins[i])
+			mins[i] = data[i];
+		if(data[i]>maxes[i])
+			maxes[i] = data[i];
+		if(maxes[i] ==mins[i] )//避免出现除零
+			mins[i]--;
+		standard_value[i] = (data[i]-mins[i])*10000/(maxes[i]-mins[i]);
+		//下面是提线算法
+	}
+
+	//此处暂时只使用左右两个电感,判断车辆状态是否偏出赛道、是否进入上下坡等内容的程序均由状态机完成
+
+	int32_t error = (sqrt(standard_value[0]) - sqrt(standard_value)) / (sqrt(standard_value[0]) - sqrt(standard_value));
+
+	int16_t duty_cyc = GetControlOutput(error);
+	return duty_cyc;
+
+
+
 }

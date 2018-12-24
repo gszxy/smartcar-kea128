@@ -26,6 +26,8 @@ State* IdleState::HandleCommand(uint8_t command)
 		return new TestADConverterState();
 	case cmd::test_ftm:
 		return new TestFTMState();
+	case cmd::start:
+		return new RunningState();
 	default:
 		return nullptr;
 	}

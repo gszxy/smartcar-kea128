@@ -107,6 +107,28 @@ public:
 };
 
 
+/*
+ * 车辆运行状态组：类实现放在vehicle.cpp中
+ */
+
+class RunningState : public State
+{
+public:
+	virtual State* HandleCommand(uint8_t command);
+	virtual State* HandleInput(){}
+	virtual void StateChangeOp()  //从其它状态切换到当前状态时被状态机调用
+	{
+		char msg[] = "running...\n";
+		g_uartc->SendString(msg,strlen(msg));
+	}
+	virtual void StateRemainOp();
+	virtual cmd::Event AnalyseSensorData();//通过传感器数据确定设备是否出现特殊时间，如偏离赛道等
+	                                       //提线算法由控制器完成，与状态机的此方法无关
+	virtual void StateExitOp();
+};
+//TODO:实现上下坡、偏离赛道等多种状态。
+
+/*车辆运行状态组结束*/
 
 class StateMachine
 {

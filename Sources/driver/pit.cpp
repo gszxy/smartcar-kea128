@@ -8,7 +8,7 @@
 
 using namespace std;
 
-PeriodicInterruptTimer::PeriodicInterruptTimer(PITsettings::Channel channel)
+PeriodicInterruptTimer::PeriodicInterruptTimer(PITSettings::Channel channel)
 {
     SIM->SCGC |= SIM_SCGC_PIT_MASK;     /*!< enable clock to PIT */
 
