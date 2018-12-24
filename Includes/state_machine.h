@@ -122,7 +122,7 @@ public:
 		g_uartc->SendString(msg,strlen(msg));
 	}
 	virtual void StateRemainOp();
-	virtual cmd::Event AnalyseSensorData();//通过传感器数据确定设备是否出现特殊时间，如偏离赛道等
+	virtual cmd::Event AnalyseSensorData(){}//通过传感器数据确定设备是否出现特殊时间，如偏离赛道等
 	                                       //提线算法由控制器完成，与状态机的此方法无关
 	virtual void StateExitOp();
 };

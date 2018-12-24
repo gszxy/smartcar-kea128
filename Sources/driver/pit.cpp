@@ -18,3 +18,6 @@ PeriodicInterruptTimer::PeriodicInterruptTimer(PITSettings::Channel channel)
     PIT->CHANNEL[channel].TFLG  |= PIT_TFLG_TIF_MASK;
     this->channel = channel;
 }
+
+
+PeriodicInterruptTimer*  wPIT::pit_ch0 = nullptr;

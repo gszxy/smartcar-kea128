@@ -17,7 +17,7 @@
 #include "glb_var.h"
 #include "communicate.h" //串口通讯需要
 #include "motor.h"
-State* RunningState::HandleCommand()
+State* RunningState::HandleCommand(uint8_t command)
 {
 	switch(command)
 	{
@@ -35,12 +35,15 @@ State* RunningState::HandleCommand()
 
 void RunningState::StateRemainOp()
 {
-	InductorData *data = g_sensor->inductor_data;
+	volatile InductorData *data = g_sensor->inductor_data;
 	if(!data->flag_data_updated)
 		return;
 	//状态保持时，如果数据已经更新，则执行控制算法
 	AngleController *angle_control = wAngleController::GetAngleController();//从单例模式处获取指针
-	int32_t duty_cyc = angle_control->DoControl(data);//调用提线算法
+	uint16_t values[3];
+	for(int i=0;i<3;i++)
+		values[i] = data->values[i];
+	int32_t duty_cyc = angle_control->DoControl(values);//调用提线算法
 	g_steer_pwm -> SetDutyCycle(duty_cyc);//设置舵机占空比
 }
 

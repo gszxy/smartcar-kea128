@@ -62,6 +62,7 @@ void UARTCommunicator::SendString(char *buffer,uint8_t length/*长度包括终�
 		return;
 	for(uint8_t i = 0; i < length; i++)
 	{
+		this->uart->DisableIntrOnTxRegEmpty();
 		*(txb_tail_ptr - 1) = buffer[i];
 		++txb_tail_ptr;
 		if(txb_tail_ptr - txbuffer >= (txbufferlen + 1))//尾指针超出缓冲区末尾
@@ -69,6 +70,7 @@ void UARTCommunicator::SendString(char *buffer,uint8_t length/*长度包括终�
 		if(txb_tail_ptr == txb_head_ptr)
 			++txb_head_ptr;
 		//缓冲区满，覆盖掉最开始的一个字符。
+		this->uart->EnableIntrOnTxRegEmpty();
 	}
 	//开空发送寄存器中断
 	this->uart->EnableIntrOnTxRegEmpty();

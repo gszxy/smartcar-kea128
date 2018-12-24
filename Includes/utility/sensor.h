@@ -1,4 +1,4 @@
-
+#pragma once
 
 
 #include <cstdint>
@@ -33,7 +33,7 @@ public://由于中断函数的缘故，不得不把所有函数全部暴露为�
 	void StartConvert();
 };
 
-
+extern InductorSensor *g_sensor;
 
 #ifdef __cplusplus
 extern "C"
@@ -45,10 +45,10 @@ volatile void __attribute__((interrupt ("IRQ"))) ADC_IRQHandler();
 
 #ifdef __cplusplus
 }
-
-
-extern InductorSensor *g_sensor;
-
-
-
 #endif
+
+
+
+
+
+

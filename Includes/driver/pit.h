@@ -24,7 +24,7 @@ namespace PITSettings
 class PeriodicInterruptTimer
 {
 private:
-	PITsettings::Channel channel;
+	PITSettings::Channel channel;
 public:
 	PeriodicInterruptTimer(PITSettings::Channel channel);
 	inline void SetPeriod(uint32_t period_in_us)
@@ -46,16 +46,16 @@ public:
 };
 
 
-static class wPIT    //对pit类进行单例模式包装
+class wPIT    //对pit类进行单例模式包装
 {//暂时只对外提供对CH0的支持，待弄清各通道相互作用之后再添加另一个通道
 private:
-	static PeriodicInterruptTimer *pit_ch0 = nullptr;
+	static PeriodicInterruptTimer *pit_ch0 ;
 	static inline void PITch0Init()
 	{
 		pit_ch0 = new PeriodicInterruptTimer(PITSettings::channel_0);
 	}
 public:
-	static inline PeriodicInterruptTimer GetPitch0()
+	static inline PeriodicInterruptTimer* GetPitch0()
 	{
 		if(pit_ch0 == nullptr)
 			PITch0Init();

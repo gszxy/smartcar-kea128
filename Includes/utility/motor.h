@@ -32,11 +32,11 @@ public:
 	}
 };
 
-static class wMotor  //对电机类进行单例模式包装
+class wMotor  //对电机类进行单例模式包装
 {
 private:
-	static inline Motor *left_motor = nullptr;
-	static inline Motor *right_motor = nullptr;
+	static Motor *left_motor;
+	static Motor *right_motor ;
 	static inline void LeftMotorInit()
 	{
 

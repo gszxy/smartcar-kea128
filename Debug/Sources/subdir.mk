@@ -7,7 +7,8 @@ CPP_SRCS += \
 ../Sources/cppmain.cpp \
 ../Sources/glb_var.cpp \
 ../Sources/intr.cpp \
-../Sources/state_machine.cpp 
+../Sources/state_machine.cpp \
+../Sources/vehicle.cpp 
 
 C_SRCS += \
 ../Sources/main.c 
@@ -17,7 +18,8 @@ OBJS += \
 ./Sources/glb_var.o \
 ./Sources/intr.o \
 ./Sources/main.o \
-./Sources/state_machine.o 
+./Sources/state_machine.o \
+./Sources/vehicle.o 
 
 C_DEPS += \
 ./Sources/main.d 
@@ -26,7 +28,8 @@ CPP_DEPS += \
 ./Sources/cppmain.d \
 ./Sources/glb_var.d \
 ./Sources/intr.d \
-./Sources/state_machine.d 
+./Sources/state_machine.d \
+./Sources/vehicle.d 
 
 
 # Each subdirectory must supply rules for building sources it contributes

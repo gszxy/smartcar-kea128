@@ -24,8 +24,8 @@ S_UPPER_DEPS :=
 
 # Every subdirectory with source files must be described here
 SUBDIRS := \
-Sources/utility \
 Sources \
+Sources/utility \
 Sources/driver \
 Project_Settings/Startup_Code \
 

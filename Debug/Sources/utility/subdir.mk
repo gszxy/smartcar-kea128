@@ -5,14 +5,20 @@
 # Add inputs and outputs from these tool invocations to the build variables 
 CPP_SRCS += \
 ../Sources/utility/communicate.cpp \
+../Sources/utility/motor.cpp \
+../Sources/utility/pid.cpp \
 ../Sources/utility/sensor.cpp 
 
 OBJS += \
 ./Sources/utility/communicate.o \
+./Sources/utility/motor.o \
+./Sources/utility/pid.o \
 ./Sources/utility/sensor.o 
 
 CPP_DEPS += \
 ./Sources/utility/communicate.d \
+./Sources/utility/motor.d \
+./Sources/utility/pid.d \
 ./Sources/utility/sensor.d 
 
 

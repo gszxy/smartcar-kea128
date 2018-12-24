@@ -14,6 +14,8 @@
  * PIDController Member functions
  */
 
+AngleController*  wAngleController::ac = nullptr;
+
 PIDController::PIDController(uint16_t p,uint16_t i,uint16_t d)
 {
 	this->p = p;
@@ -56,7 +58,7 @@ uint16_t PIDController::GetControlOutput(int32_t error)
  * SteerController Member functions
  */
 
-int32_t AngleController::DoControl(InductorData *data)
+int32_t AngleController::DoControl(uint16_t data[])
 {
 	//data[0 1 2]分别是左、中、右电感的值
 	//下面进行归一化
@@ -76,7 +78,7 @@ int32_t AngleController::DoControl(InductorData *data)
 
 	//此处暂时只使用左右两个电感,判断车辆状态是否偏出赛道、是否进入上下坡等内容的程序均由状态机完成
 
-	int32_t error = (sqrt(standard_value[0]) - sqrt(standard_value)) / (sqrt(standard_value[0]) - sqrt(standard_value));
+	int32_t error = (sqrt(standard_value[0]) - sqrt(standard_value[2])) / (sqrt(standard_value[0]) - sqrt(standard_value[2]));
 
 	int16_t duty_cyc = GetControlOutput(error);
 	return duty_cyc;
