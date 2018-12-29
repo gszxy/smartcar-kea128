@@ -78,9 +78,14 @@ int32_t AngleController::DoControl(uint16_t data[])
 
 	//此处暂时只使用左右两个电感,判断车辆状态是否偏出赛道、是否进入上下坡等内容的程序均由状态机完成
 
-	int32_t error = (sqrt(standard_value[0]) - sqrt(standard_value[2])) / (sqrt(standard_value[0]) - sqrt(standard_value[2]));
+	int32_t error = standard_value[0] - standard_value[2];
 
 	int16_t duty_cyc = GetControlOutput(error);
+	if(duty_cyc>5450)
+		duty_cyc = 5450;
+	else if(duty_cyc < 4550)
+		duty_cyc = 4550;//舵机限幅
+	//TODO:将限幅功能移动到包装的舵机类中
 	return duty_cyc;
 
 

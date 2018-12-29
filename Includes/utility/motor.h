@@ -15,12 +15,14 @@
 
 class Motor
 {
-	GPIOModule *gpio_c;  //控制输出是否被选通的gpio模块
+	GPIOModule *gpio_c;  //控制正反转的gpio模块,暂不使用
 	FlexTimerModule *ftm;//pwm模块
 public:
-	Motor()
+	Motor(FTMSettings::Modules module,FTMSettings::Channels channel,FTMSettings::PortRemapType remap)
 	{
-
+		ftm = new FlexTimerModule(module,channel,remap);
+		ftm->SetPWMParam(500,0);
+		ftm->EnablePWMOutput();
 	}
 	inline void SetMotorSpeed(uint16_t ftm_duty_cycle)
 	{
@@ -39,11 +41,11 @@ private:
 	static Motor *right_motor ;
 	static inline void LeftMotorInit()
 	{
-
+		left_motor = new Motor(FTMSettings::mFTM0,FTMSettings::FTM_CH0,FTMSettings::remap_first);
 	}
 	static inline void RightMotorInit()
 	{
-
+		right_motor = new Motor(FTMSettings::mFTM1,FTMSettings::FTM_CH1,FTMSettings::remap_none);
 	}
 public:
 	static inline Motor* GetLeftMotorObj()
@@ -55,7 +57,7 @@ public:
 	static inline Motor* GetRightMotorObj()
 	{
 		if(right_motor == nullptr)
-			LeftMotorInit();
+			RightMotorInit();
 		return right_motor;
 	}
 

@@ -66,7 +66,7 @@ class FlexTimerModule
 private:
 	FTMSettings::Modules module;
 	FTMSettings::Channels channel;
-	uint16_t frequency = 2000;
+	uint16_t frequency = 329;//电机工作的默认频率，此时50%占空比时电机位于中位
 	uint16_t duty_cycle = 5000;
 /*additional channels start*/
 	//一个FTM通道的各个模块可以输出同频率不同占空比的PWM信号，因此由一些额外的channel以供单独设置各个channel

@@ -28,23 +28,46 @@ State* RunningState::HandleCommand(uint8_t command)
 	//case cmd::test_ftm://读取子命令,暂未实现
 	//	sub_command = g_uartc->GetCharWithExpiration();
 	//	break;
-	//default:
-	//	return nullptr;
+	default:
+		return nullptr;
 	}
+}
+
+void RunningState::StateChangeOp()
+{
+	char msg[] = "running...\n";
+	g_uartc->SendString(msg,strlen(msg));
+	Motor* left = wMotor::GetLeftMotorObj();
+	Motor* right = wMotor::GetRightMotorObj();
+	left->SetMotorSpeed(1900);
+	right->SetMotorSpeed(1900);
+	PeriodicInterruptTimer *pitm = wPIT::GetPitch0();
+	pitm->SetPeriod(5000);
+	g_steer_pwm->SetPWMParam(329,5000);
+	g_steer_pwm->EnablePWMOutput();
 }
 
 void RunningState::StateRemainOp()
 {
-	volatile InductorData *data = g_sensor->inductor_data;
-	if(!data->flag_data_updated)
+	if(!g_sensor->flag_data_updated)
 		return;
+	g_sensor->flag_data_updated = false;
 	//状态保持时，如果数据已经更新，则执行控制算法
 	AngleController *angle_control = wAngleController::GetAngleController();//从单例模式处获取指针
 	uint16_t values[3];
-	for(int i=0;i<3;i++)
-		values[i] = data->values[i];
+	for(uint8_t i=0;i<3;i++)
+		values[i] = g_sensor->values[i];
 	int32_t duty_cyc = angle_control->DoControl(values);//调用提线算法
 	g_steer_pwm -> SetDutyCycle(duty_cyc);//设置舵机占空比
+
+	//下面将电感数据发送至上位机
+	for(uint8_t i=0;i<3;i++)
+	{
+		g_uartc->SendChar(0xFF - i);//同步字，用于上位机辨识消息
+		g_uartc->SendChar(0xFF - i);//同步字，用于上位机辨识消息
+		g_uartc->SendChar(static_cast<uint8_t>(values[i]>>8));//高八位
+		g_uartc->SendChar(static_cast<uint8_t>(values[i]));//低八位
+	}
 }
 
 void RunningState::StateExitOp()

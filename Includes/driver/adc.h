@@ -189,6 +189,8 @@ public:
     inline void EnableIntrOnCovertFinished()
     {
     	ADC->SC1 |= ADC_SC1_AIEN_MASK;
+	    NVIC_EnableIRQ(ADC_IRQn);
+
     }
     inline void DisableIntrOncovertFinishend()
     {

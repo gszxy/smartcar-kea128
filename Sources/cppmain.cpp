@@ -7,18 +7,22 @@
 #include "UART.h"
 #include "core_cm0plus.h"
 #include "ftm.h"
+#include "sensor.h"
 using namespace std;
 
 
 int _cppmain()
 {
 
+	int vehicle_auto_init_flag = 1;
+
 	bool vehicle_has_piority_command = false;
 	//下面是模块初始化工作
+	g_sensor = new InductorSensor();
 	//串口测试模块初始化（临时）
 	g_test_adc = new ADCModule(ADC_CHANNEL_AD0,ADC_8BIT);
 	//串口初始化
-	g_uartc = new UARTCommunicator(64, 64, UART_settings::UARTR0, false, 19200);//RX--B0 ,TX--B1
+	g_uartc = new UARTCommunicator(64, 64, UART_settings::UARTR0, false, 115200);//RX--B0 ,TX--B1
 	//状态机初始化
 	StateMachine *fsm = new StateMachine();
 	char msg[] = "startup\n";
@@ -32,10 +36,13 @@ int _cppmain()
 		uint8_t command = g_uartc->GetChar();
 		/*...........检查中断处理程序是否已经更新数据..........*/
 
-
+		if(vehicle_auto_init_flag)
+		{
+			vehicle_auto_init_flag = 0;
+			command = 3;
+		}
 		/*.............状态机更新并执行相应操作.............*/
-		if(command!=0)
-			fsm->SendCommand(command);
+		fsm->SendCommand(command);
 
 	}
 

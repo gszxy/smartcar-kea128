@@ -29,19 +29,30 @@ public:
 	PeriodicInterruptTimer(PITSettings::Channel channel);
 	inline void SetPeriod(uint32_t period_in_us)
 	{
+
 		PIT->CHANNEL[channel].LDVAL  = period_in_us * (SystemCoreClock/1000000);
+		this->_DisableIntr();//需要关闭再打开中断，才能使计数器立即更新
+		this->_EnableIntr();
 	}
-	inline void EnableIntr()
+	inline void _EnableIntr()
 	{
 	    PIT->CHANNEL[channel].TCTRL |= PIT_TCTRL_TIE_MASK;
+	    if (channel)
+	    {
+	      NVIC_EnableIRQ(PIT_CH1_IRQn);
+	    }
+	    else
+	    {
+	      NVIC_EnableIRQ(PIT_CH0_IRQn);
+	    }
 	}
-	inline void DisableIntr()
+	inline void _DisableIntr()
 	{
 	    PIT->CHANNEL[channel].TCTRL &= ~PIT_TCTRL_TIE_MASK;
 	}
 	~PeriodicInterruptTimer()
 	{
-		this->DisableIntr();
+		this->_DisableIntr();
 	}
 };
 

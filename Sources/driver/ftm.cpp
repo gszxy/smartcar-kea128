@@ -53,6 +53,7 @@ FlexTimerModule::FlexTimerModule(FTMSettings::Modules module,FTMSettings::Channe
 	  this->module = module;
 
 	  //我们还没有设置PWM模块的计数时钟源，因此现在还不会开始输出PWM波形
+	  SetPWMParam(this->frequency,this->duty_cycle);//载入使电机位于中位的默认值
 }
 
 void FlexTimerModule::SetPWMParam(uint16_t frequency,uint16_t duty_cycle)

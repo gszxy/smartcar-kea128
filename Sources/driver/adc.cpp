@@ -53,7 +53,7 @@ int8_t ADCModule::StartConversion(uint8_t count)
 	                    ) ;
 	ADC->APCTL1 = ADC_APCTL1_ADPC(1<< this->channel) ;
     ADC->SC4 =(0
-    	|ADC_SC4_AFDEP(7) //FIFO深度
+    	|ADC_SC4_AFDEP(count-1) //FIFO深度
     );
     //向FIFO队列循环发送count次ADC请求，FIFO和此处操作见英文版用户手册344页或中文版326页
     for(int8_t i=1;i<=count;i++)
@@ -99,7 +99,8 @@ uint16_t ADCModule::TryFetchResult()
 	{
 		sum += ADC->R;
 	}
-	return sum / this->active_convert_count;//返回平均值
+	uint16_t final = sum / this->active_convert_count;
+	return final ;//返回平均值
 }
 
 

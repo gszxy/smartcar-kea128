@@ -50,8 +50,13 @@ public:
 	{
 		PIDController::SetParameters(p,i,d);
 	}
-	AngleController() : PIDController(1900,0,70)
+	AngleController() : PIDController(1000,0,100)
 	{
+		for(int i = 0;i<3;i++)
+		{
+			maxes[i]=0x0;
+			mins[i]=0xffff;
+		}
 	}
 };
 
