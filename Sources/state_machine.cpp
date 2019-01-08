@@ -12,11 +12,18 @@
 #include "state_machine.h"
 #include "glb_var.h"
 #include "ftm.h"
+#include "motor.h"
+#include "communicate.h"
+#include "pid.h"
 #include <cstdio>
 using namespace std;
 
 State* IdleState::HandleCommand(uint8_t command)
 {
+	Motor *mleft,*mright;
+	AngleController* ac;
+	uint16_t value = 0 ,p = 0, i = 0, d = 0;
+	uint8_t msg;
 	switch(command)
 	{
 	case cmd::test_uart:
@@ -28,9 +35,36 @@ State* IdleState::HandleCommand(uint8_t command)
 		return new TestFTMState();
 	case cmd::start:
 		return new RunningState();
+	case cmd::set_speed_open_loop:
+		mleft = wMotor::GetLeftMotorObj();
+		mright =wMotor::GetRightMotorObj();
+		msg = g_uartc->GetCharWithExpiration();
+		value += msg<<8;
+		msg = g_uartc->GetCharWithExpiration();
+		value += msg;
+		mleft->SetMotorSpeed(value);
+		mright->SetMotorSpeed(value);
+		break;
+	case cmd::set_pid_param:
+		msg = g_uartc->GetCharWithExpiration();
+		p += msg<<8;
+		msg = g_uartc->GetCharWithExpiration();
+		p += msg;
+		msg = g_uartc->GetCharWithExpiration();
+		i += msg<<8;
+		msg = g_uartc->GetCharWithExpiration();
+		i += msg;
+		msg = g_uartc->GetCharWithExpiration();
+		d += msg<<8;
+		msg = g_uartc->GetCharWithExpiration();
+		d += msg;
+		//获取16位的pid参数
+		ac = wAngleController::GetAngleController();
+		ac->SetParameters(p,i,d);
 	default:
-		return nullptr;
+		break;
 	}
+	return nullptr;
 }
 
 State* TestUARTState::HandleCommand(uint8_t command)

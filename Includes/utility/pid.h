@@ -10,16 +10,19 @@
 
 #include <cstdint>
 #include "sensor.h"
-
+#include "neuron.h"
 
 class PIDController
 {
 private:
 /*PID Parameters*/
-	uint16_t p;
+	uint16_t p_left;
+	uint16_t p_right;
+	uint16_t pls = 0;
 	uint16_t i;
 	uint16_t d;
-	uint16_t storage[10];//记录的历史数据量
+	uint16_t former_output;
+	double storage[5];//记录的历史数据量
 	uint8_t index;
 public:
 	PIDController(uint16_t p,uint16_t i,uint16_t d);
@@ -28,11 +31,16 @@ public:
 	 * 输入量：误差。须在外部使用各算法编写完成，获得误差后调用函数。
 	 * 输出量:一个0-10000的数，用于控制PWM波的占空比
 	 */
-	uint16_t GetControlOutput(int32_t error);
-	void SetParameters(uint16_t p,uint16_t i ,uint16_t d );//参数单位：万分之一
+	uint16_t GetControlOutput(double error);
+	void SetParameters(uint16_t p,uint16_t i ,uint16_t d )//参数单位：万分之一
+	{
+		p_left = p_right = p;
+		this->i = i;
+		this->d = d;
+	}
 };
 
-class AngleController : private PIDController
+class AngleController : public PIDController
 {
 private:
 /*historical data begins*/
@@ -46,16 +54,12 @@ public:
 	 */
 
 	int32_t DoControl(uint16_t data[]);
-	inline void SetParameters(uint16_t p,uint16_t i,uint16_t d )
-	{
-		PIDController::SetParameters(p,i,d);
-	}
-	AngleController() : PIDController(1000,0,100)
+	AngleController() : PIDController(3000,0,40)
 	{
 		for(int i = 0;i<3;i++)
 		{
 			maxes[i]=0x0;
-			mins[i]=0xffff;
+			mins[i]=0x0;//最小值已禁用
 		}
 	}
 };

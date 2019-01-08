@@ -44,6 +44,11 @@ namespace cmd//避免污染全局命名空间
 		test_adc,
 		test_ftm,
 		test_gpio,
+		/*..........闲置状态设置指令..........*/
+		set_speed_open_loop,
+		set_speed_closed_loop,
+		set_pid_param,
+		set_pid_learn_speed,
 		/*..........复位指令..........*/
 		reset
 	};

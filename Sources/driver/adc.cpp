@@ -91,8 +91,8 @@ uint16_t ADCModule::TryFetchResult()
 {
 	//if(!this->channel_active)//通道未激活，说明当前存放的结果要么不存在，要么不属于此通道
 	//	return 0xFFFF;//正常转换最多12位，这个数字不可能出现。作错误码。
-	if(!(ADC->SC1 & ADC_SC1_COCO_MASK))//转换未完成
-		return 0xFFFE;
+	//if(!(ADC->SC1 & ADC_SC1_COCO_MASK))//转换未完成
+	//	return 0xFFFE;
 	int16_t sum = 0;
 
 	for(int8_t count = this->active_convert_count; count>=1; count--)

@@ -39,7 +39,12 @@ namespace FTMSettings
 		remap_first,
 		remap_second
 	};
-
+	enum ExternalClockPin
+	{
+		clk_0_A5 = 0x0,
+		clk_1_E0 = 0x1,
+		clk_2_E7 = 0x2
+	};
 }
 
 
@@ -65,52 +70,98 @@ class FlexTimerModule
 {
 private:
 	FTMSettings::Modules module;
-	FTMSettings::Channels channel;
-	uint16_t frequency = 329;//电机工作的默认频率，此时50%占空比时电机位于中位
-	uint16_t duty_cycle = 5000;
-/*additional channels start*/
-	//一个FTM通道的各个模块可以输出同频率不同占空比的PWM信号，因此由一些额外的channel以供单独设置各个channel
-	//此功能尚未实现
-	bool ftm_is_in_multichannel_mode = false;
-	FTMSettings::Channels *module_all_channels;
-/*private functions used in constructor begin*/
-	void PinSet(FTMSettings::Modules module,FTMSettings::Channels channel,FTMSettings::PortRemapType port_remap_type);
-
+	uint16_t frequency = 329;//PWM输出模式下的频率
 /*private functions end*/
 public:
-	//构造函数1：单通道模式
-	FlexTimerModule(FTMSettings::Modules module,FTMSettings::Channels channel,FTMSettings::PortRemapType port_remap_type);
-	//构造函数2：多通道模式
-
-	//
-	void SetPWMParam(uint16_t frequency,uint16_t duty_cycle/*占空比，该数除以10000为占空比(小数)*/);
-	inline void EnablePWMOutput()
+	FlexTimerModule(FTMSettings::Modules module);
+	FlexTimerModule(FTMSettings::Modules module, FTMSettings::ExternalClockPin clock_pin);
+	inline void EnableBusClock()//总线时钟，用于pwm输出。
 	{
 		FTMx[this->module]->SC = FTM_SC_CLKS(1)|FTM_SC_PS(2) ;
 		//FTM_SC_CLKS：向模块提供系统时钟，4分频  10MHz
 	}
-	inline void DisablePWMOutput()
+	inline void EnableExternalClock()//外部时钟，用于输入计数。若使用第一个构造函数后调用此函数，将因为无有效时钟触发硬件错误中断
+	{
+		  FTMx[ftm]->SC = FTM_SC_PS(0)|FTM_SC_CLKS(3);	            //分频系数	0
+		  //FTM_SC_CLKS:向模块提供外部时钟，不分频
+	}
+	inline void DisableClock()//在输出模式下，使用这两个函数控制PWM波的有无
 	{
 		FTMx[this->module]->SC = FTM_SC_CLKS(0);
 		//不向计数器提供任何时钟，终止计数
+	}
+	inline void ClearCounter()
+	{
 		FTMx[this->module]->CNT = 0;
-		//设置为输出低电平
 		//向计数器内写入任意值，重置为CNTIN中给定的初始值。修改0为其他数不能改变计数器初值！
 	}
+	inline void SetExternalClockSource(FTMSettings::ExternalClockPin clock_pin)
+	{
+		SIM->PINSEL &= ~SIM_PINSEL_FTM0CLKPS_MASK;    //清除外部时钟引脚选择
+		if(clock_pin == FTMSettings::clk_0_A5)       //开启内部上拉，避免时钟输入引脚上出现高阻态
+			PORT->PUE0 |= (uint32)(1<<5);
+		else if(clock_pin == FTMSettings::clk_1_E0)
+			PORT->PUE1 |= (uint32)(1<<0);
+		else if(clock_pin == FTMSettings::clk_2_E7)
+			PORT->PUE1 |= (uint32)(1<<7);
+		SIM->PINSEL |= SIM_PINSEL_FTM0CLKPS(clock_pin);       //选择外部时钟输入引脚
+	}
+
 	~FlexTimerModule()
 	{
 
 	}
-	inline void SetFrequency(uint16_t freq)
+	inline FTMSettings::Modules GetModuleNo()
 	{
-		SetPWMParam(freq,this->duty_cycle);
+		return this->module;
 	}
-	inline void SetDutyCycle(uint16_t duty_cyc)
+	//在PWM输出模式下设置输出频率
+	void SetFrequency(uint16_t freq);
+
+
+	//获取计数器内的值。两种模式下均有效，但主要用于输入计数时读取值
+	inline uint16_t GetCounterValue()
 	{
-		SetPWMParam(this->frequency,duty_cyc);
+		return FTMx[this->module]->CNT;
 	}
 };
 
-extern FlexTimerModule *g_steer_pwm;
+
+class FlexTimerChannel
+{
+private:
+	FTMSettings::Channels channel;
+	FlexTimerModule *module;
+	/*private functions used in constructor begin*/
+	void PinSet(FTMSettings::Modules module,FTMSettings::Channels channel,FTMSettings::PortRemapType port_remap_type);
+public:
+	FlexTimerChannel(FlexTimerModule *module,FTMSettings::Channels channel_no,FTMSettings::PortRemapType port_remap_type);
+	void SetDutyCycle(uint16_t duty_cyc)
+	{
+		uint16_t counter_max_value = FTMx[this->module->GetModuleNo()]->MOD;
+		uint16_t chn_match_value = (uint16_t)(((uint32_t)(10000 - duty_cycle) * (counter_max_value - 0 + 1)) / 10000);
+		//计数器计数的总值是  最大值-初值+1，其中0是初值（可以改的）
+		//已经定义了占空比是duty_cycle除以1万，因此可以计算出电平翻转时计数器的值
+		FTMx[this->module]->MOD = counter_max_value ;
+		FTMx[this->module]->CONTROLS[this->channel].CnV = chn_match_value  ;
+	}
+	inline void EnablePWMOutput()
+	{
+		  //下面设置通道的控制寄存器CnSc。它设置了一个边沿对齐，正极性PWM，详见用户手册379页表26-69（以下各位的真值表）
+		  FTMx[module->GetModuleNo()]->CONTROLS[channel].CnSC |= (0
+		                                       |FTM_CnSC_ELSA_MASK
+		                                  //   |FTM_CnSC_ELSB_MASK  //低电平有效脉冲，计数器达到match(CnV)之后输出高电平
+		                                  //   |FTM_CnSC_MSA_MASK
+		                                       |FTM_CnSC_MSB_MASK   //边缘对齐PWM
+		                                  //   |FTM_CnSC_CHIE_MASK  //不开中断
+		                                  //   |FTM_CnSC_CHF_MASK   //不重置标志位
+		                                       );
+	}
+	inline void DisablePWMOutput()
+	{
+		 FTMx[module->GetModuleNo()]->CONTROLS[channel].CnSC = 0;
+	}
+};
+
 
 #endif /* INCLUDES_DRIVER_FTM_H_ */

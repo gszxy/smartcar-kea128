@@ -17,8 +17,6 @@ int _cppmain()
 	int vehicle_auto_init_flag = 1;
 
 	bool vehicle_has_piority_command = false;
-	//下面是模块初始化工作
-	g_sensor = new InductorSensor();
 	//串口测试模块初始化（临时）
 	g_test_adc = new ADCModule(ADC_CHANNEL_AD0,ADC_8BIT);
 	//串口初始化
@@ -28,7 +26,7 @@ int _cppmain()
 	char msg[] = "startup\n";
 	g_uartc->SendString(msg,9);
 	//测试PWM输出
-	g_steer_pwm = new FlexTimerModule(FTMSettings::mFTM2,FTMSettings::FTM_CH0,FTMSettings::remap_first); //H0 PORT
+	//g_steer_pwm = new FlexTimerModule(FTMSettings::mFTM2,FTMSettings::FTM_CH0,FTMSettings::remap_first); //H0 PORT
 	//PWM输出设置结束
 	while(1)//程序主循环
 	{

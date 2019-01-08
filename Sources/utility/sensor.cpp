@@ -9,10 +9,12 @@
 #include "adc.h"
 #include "glb_var.h"
 #include "SKEAZ1284.h"
+#include "ftm.h"
 
 using namespace std;
 
-InductorSensor *g_sensor = nullptr;
+InductorSensor *SensorSingletons::inductors = nullptr;
+WheelSpeedSensor *SensorSingletons::wheels = nullptr;
 
 
 InductorSensor::InductorSensor()
@@ -38,11 +40,36 @@ void InductorSensor::StartConvert()
 
 }
 
+
+
+
+
+
+
 volatile void __attribute__((interrupt ("IRQ"))) PIT_CH0_IRQHandler()
 {//定时中断，开始AD转换和数据更新
+
+	static uint8_t counter = 0;//计数器，用于控制车轮测速。每2个中断周期测量一侧轮胎的速度
+	counter++;
+	if(counter == 1)
+	{
+		SensorSingletons::GetWheelSpeedSensor()->GetAndClearCount();
+		SensorSingletons::GetWheelSpeedSensor()->LeftStart();
+	}
+	else if(counter == 3)
+	{
+		SensorSingletons::GetWheelSpeedSensor()->GetAndClearCount();
+		SensorSingletons::GetWheelSpeedSensor()->RightStart();
+	}
+	else if(counter == 4)
+		counter = 0;
+
+
+	g_sensor->StartConvert();
+
 	PIT->CHANNEL[0].TFLG  |= PIT_TFLG_TIF_MASK;
 	PIT->CHANNEL[1].TFLG  |= PIT_TFLG_TIF_MASK;
-	g_sensor->StartConvert();
+	//清标志位，否则中断会不断触发
 }
 /*
 volatile void __attribute__((interrupt ("IRQ"))) ADC_IRQHandler()

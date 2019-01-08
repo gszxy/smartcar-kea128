@@ -9,6 +9,7 @@
 #include <cmath>
 #include "pid.h"
 #include "sensor.h"
+#include "neuron.h"
 
 /*
  * PIDController Member functions
@@ -18,7 +19,7 @@ AngleController*  wAngleController::ac = nullptr;
 
 PIDController::PIDController(uint16_t p,uint16_t i,uint16_t d)
 {
-	this->p = p;
+	this->p_left = this->p_right =  p;
 	this->i = i;
 	this->d = d;
 	for(int i=0;i<10;i++)
@@ -28,29 +29,43 @@ PIDController::PIDController(uint16_t p,uint16_t i,uint16_t d)
 	this->index = 0;
 }
 
-uint16_t PIDController::GetControlOutput(int32_t error)
+uint16_t PIDController::GetControlOutput(double error)
 {
 	++index;
-	if(index == 10)
+	if(index == 5)
 		index = 0;
 	storage[index] = error;
 	int32_t diff;
 	if(index == 0)
-		diff = storage[0] - storage[9];
+		diff = storage[0] - storage[4];
 	else
 		diff = storage[index] - storage[index-1];
 	//求微分项结果
     //下面是比例项
-	int32_t proportion = error * p;
+	int32_t proportion;
+	if(error>0)
+		proportion = error*p_right;//比例项
+	else
+		proportion = error*p_left;//比例项
 	//然后是积分项
 	int32_t integration = 0;
 	for(int i = 0;i<10;i++)
 		integration += storage[i];
 	integration *= i;//乘以积分项系数
+	diff *= this->d;
+	int32_t final = (diff + proportion + integration)/1000;
 
-	int32_t final = (diff + proportion + integration)/10000;
+
+		p_left -= pls * ((error )* static_cast<int32_t>(final - former_output) ) /10000;
+		p_right += pls * ((error )* static_cast<int32_t>(final- former_output)) /10000;
+		if(p_left < 800)
+			p_left = 800;
+		if(p_left > 2400)
+			p_left = 2400;
+
+
+	former_output = final;
 	return (uint16_t)(5000+final);
-	//TODO:增加保护性截断功能，防止舵机超出允许范围
 }
 
 
@@ -72,20 +87,23 @@ int32_t AngleController::DoControl(uint16_t data[])
 			maxes[i] = data[i];
 		if(maxes[i] ==mins[i] )//避免出现除零
 			mins[i]--;
-		standard_value[i] = (data[i]-mins[i])*10000/(maxes[i]-mins[i]);
+		standard_value[i] = (data[i]-mins[i])*1000/(maxes[i]-mins[i]);
 		//下面是提线算法
 	}
 
 	//此处暂时只使用左右两个电感,判断车辆状态是否偏出赛道、是否进入上下坡等内容的程序均由状态机完成
 
-	int32_t error = standard_value[0] - standard_value[2];
+	double error =  pow(300 * sqrt( abs(standard_value[0] - standard_value[2]) ) / (standard_value[0] + standard_value[2]) , 2) ;
+	if(standard_value[0] < standard_value[2])
+		error*=-1;
+
+
 
 	int16_t duty_cyc = GetControlOutput(error);
-	if(duty_cyc>5450)
-		duty_cyc = 5450;
-	else if(duty_cyc < 4550)
-		duty_cyc = 4550;//舵机限幅
-	//TODO:将限幅功能移动到包装的舵机类中
+	if(duty_cyc>5500)
+		duty_cyc = 5500;
+	else if(duty_cyc < 4400)
+		duty_cyc = 4400;//舵机限幅
 	return duty_cyc;
 
 

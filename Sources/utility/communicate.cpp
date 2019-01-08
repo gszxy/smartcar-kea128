@@ -63,7 +63,11 @@ void UARTCommunicator::SendString(char *buffer,uint8_t length/*长度包括终�
 	for(uint8_t i = 0; i < length; i++)
 	{
 		this->uart->DisableIntrOnTxRegEmpty();
-		*(txb_tail_ptr - 1) = buffer[i];
+		if(txb_tail_ptr - txbuffer == 0)
+			*(txbuffer + txbufferlen - 1) = buffer[i];
+		else
+			*(txb_tail_ptr - 1) = buffer[i];
+
 		++txb_tail_ptr;
 		if(txb_tail_ptr - txbuffer >= (txbufferlen + 1))//尾指针超出缓冲区末尾
 			txb_tail_ptr = txbuffer;
