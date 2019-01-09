@@ -23,33 +23,33 @@ FlexTimerModule::FlexTimerModule(FTMSettings::Modules module, FTMSettings::Exter
 		  SIM->SCGC |= SIM_SCGC_FTM0_MASK;              //开启FTM外设时钟
 		  SIM->PINSEL &= ~SIM_PINSEL_FTM0CLKPS_MASK;    //清除外部时钟引脚选择
 		  if(clock_pin == FTMSettings::clk_0_A5)       //开启内部上拉，避免时钟输入引脚上出现高阻态
-			  PORT->PUE0 |= (uint32)(1<<5);
+			  PORT->PUE0 |= (uint32_t)(1<<5);
 		  else if(clock_pin == FTMSettings::clk_1_E0)
-			  PORT->PUE1 |= (uint32)(1<<0);
+			  PORT->PUE1 |= (uint32_t)(1<<0);
 		  else if(clock_pin == FTMSettings::clk_2_E7)
-			  PORT->PUE1 |= (uint32)(1<<7);
+			  PORT->PUE1 |= (uint32_t)(1<<7);
 		  SIM->PINSEL |= SIM_PINSEL_FTM0CLKPS(clock_pin);       //选择外部时钟输入引脚
 		  break;
 	  case mFTM1:
 		  SIM->SCGC |= SIM_SCGC_FTM1_MASK;
 		  SIM->PINSEL &= ~SIM_PINSEL_FTM1CLKPS_MASK;    //清除外部时钟引脚选择
 		  if(clock_pin == FTMSettings::clk_0_A5)       //开启内部上拉，避免时钟输入引脚上出现高阻态
-			  PORT->PUE0 |= (uint32)(1<<5);
+			  PORT->PUE0 |= (uint32_t)(1<<5);
 		  else if(clock_pin == FTMSettings::clk_1_E0)
-			  PORT->PUE1 |= (uint32)(1<<0);
+			  PORT->PUE1 |= (uint32_t)(1<<0);
 		  else if(clock_pin == FTMSettings::clk_2_E7)
-			  PORT->PUE1 |= (uint32)(1<<7);
+			  PORT->PUE1 |= (uint32_t)(1<<7);
 		  SIM->PINSEL |= SIM_PINSEL_FTM1CLKPS(clock_pin);       //选择外部时钟输入引脚
 		  break;
 	  case mFTM2:
 		  SIM->SCGC  |= SIM_SCGC_FTM2_MASK;
 		  SIM->PINSEL &= ~SIM_PINSEL_FTM2CLKPS_MASK;    //清除外部时钟引脚选择
 		  if(clock_pin == FTMSettings::clk_0_A5)       //开启内部上拉，避免时钟输入引脚上出现高阻态
-			  PORT->PUE0 |= (uint32)(1<<5);
+			  PORT->PUE0 |= (uint32_t)(1<<5);
 		  else if(clock_pin == FTMSettings::clk_1_E0)
-			  PORT->PUE1 |= (uint32)(1<<0);
+			  PORT->PUE1 |= (uint32_t)(1<<0);
 		  else if(clock_pin == FTMSettings::clk_2_E7)
-			  PORT->PUE1 |= (uint32)(1<<7);
+			  PORT->PUE1 |= (uint32_t)(1<<7);
 		  SIM->PINSEL |= SIM_PINSEL_FTM2CLKPS(clock_pin);       //选择外部时钟输入引脚
 		  break;
 	  }
@@ -107,11 +107,11 @@ void FlexTimerModule::SetFrequency(uint16_t freq)
 void FlexTimerChannel::SetDutyCycle(uint16_t duty_cyc)
 {
 	uint16_t counter_max_value = FTMx[this->module->GetModuleNo()]->MOD;
-	uint16_t chn_match_value = (uint16_t)(((uint32_t)(10000 - duty_cycle) * (counter_max_value - 0 + 1)) / 10000);
+	uint16_t chn_match_value = (uint16_t)(((uint32_t)(10000 - duty_cyc) * (counter_max_value - 0 + 1)) / 10000);
 	//计数器计数的总值是  最大值-初值+1，其中0是初值（可以改的）
 	//已经定义了占空比是duty_cycle除以1万，因此可以计算出电平翻转时计数器的值
-	FTMx[this->module]->MOD = counter_max_value ;
-	FTMx[this->module]->CONTROLS[this->channel].CnV = chn_match_value  ;
+	FTMx[this->module->GetModuleNo()]->MOD = counter_max_value ;
+	FTMx[this->module->GetModuleNo()]->CONTROLS[this->channel].CnV = chn_match_value  ;
 }
 
 FlexTimerChannel::FlexTimerChannel(FlexTimerModule *module,FTMSettings::Channels channel_no,FTMSettings::PortRemapType port_remap_type)

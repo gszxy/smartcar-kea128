@@ -15,6 +15,8 @@
  * PIDController Member functions
  */
 
+
+
 AngleController*  wAngleController::ac = nullptr;
 
 PIDController::PIDController(uint16_t p,uint16_t i,uint16_t d)
@@ -65,7 +67,7 @@ uint16_t PIDController::GetControlOutput(double error)
 
 
 	former_output = final;
-	return (uint16_t)(5000+final);
+	return (uint16_t)(final);
 }
 
 
@@ -93,18 +95,19 @@ int32_t AngleController::DoControl(uint16_t data[])
 
 	//此处暂时只使用左右两个电感,判断车辆状态是否偏出赛道、是否进入上下坡等内容的程序均由状态机完成
 
-	double error =  pow(300 * sqrt( abs(standard_value[0] - standard_value[2]) ) / (standard_value[0] + standard_value[2]) , 2) ;
+	double error_front = pow(300 * sqrt( abs(standard_value[0] - standard_value[2]) ) / (standard_value[0] + standard_value[2]) , 2) ;
+	double error_hind = pow(300 * sqrt( abs(standard_value[1] - standard_value[3]) ) / (standard_value[1] + standard_value[3]) , 2);
+
 	if(standard_value[0] < standard_value[2])
-		error*=-1;
+		error_front*=-1;
+	if(standard_value[1] < standard_value[3])
+		error_hind*=-1;
 
+	double error = 1.1 * error_front - error_hind;
+	//目标位置-当前位置，多出来的0.1为试验性的前馈环节
+	int16_t yaw = GetControlOutput(error);
 
-
-	int16_t duty_cyc = GetControlOutput(error);
-	if(duty_cyc>5500)
-		duty_cyc = 5500;
-	else if(duty_cyc < 4400)
-		duty_cyc = 4400;//舵机限幅
-	return duty_cyc;
+	return yaw;
 
 
 

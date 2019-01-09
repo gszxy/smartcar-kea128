@@ -19,7 +19,9 @@ WheelSpeedSensor *SensorSingletons::wheels = nullptr;
 
 InductorSensor::InductorSensor()
 {
-	adcm = new ADCModule[3]{ADCModule(ADC_CHANNEL_AD0,ADC_12BIT),ADCModule(ADC_CHANNEL_AD1,ADC_12BIT),ADCModule(ADC_CHANNEL_AD2,ADC_12BIT)};
+	adcm = new ADCModule[4]{ADCModule(ADC_CHANNEL_AD0,ADC_12BIT),ADCModule(ADC_CHANNEL_AD1,ADC_12BIT),
+		                    ADCModule(ADC_CHANNEL_AD2,ADC_12BIT),ADCModule(ADC_CHANNEL_AD3,ADC_12BIT)};
+	//A0 A1 A6 A7
 }
 
 InductorSensor::~InductorSensor()
@@ -29,7 +31,7 @@ InductorSensor::~InductorSensor()
 
 void InductorSensor::StartConvert()
 {
-	for(int i=0;i<3;i++)
+	for(int i=0;i<4;i++)
 	{
 		adcm[i].StartConversion(3);
 		adcm[i].WaitUntilFinished();
@@ -65,7 +67,7 @@ volatile void __attribute__((interrupt ("IRQ"))) PIT_CH0_IRQHandler()
 		counter = 0;
 
 
-	g_sensor->StartConvert();
+	SensorSingletons::GetInductorSensor()->StartConvert();
 
 	PIT->CHANNEL[0].TFLG  |= PIT_TFLG_TIF_MASK;
 	PIT->CHANNEL[1].TFLG  |= PIT_TFLG_TIF_MASK;

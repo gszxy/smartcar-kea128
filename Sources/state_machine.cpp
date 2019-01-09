@@ -15,6 +15,7 @@
 #include "motor.h"
 #include "communicate.h"
 #include "pid.h"
+#include "steer.h"
 #include <cstdio>
 using namespace std;
 
@@ -36,14 +37,14 @@ State* IdleState::HandleCommand(uint8_t command)
 	case cmd::start:
 		return new RunningState();
 	case cmd::set_speed_open_loop:
-		mleft = wMotor::GetLeftMotorObj();
-		mright =wMotor::GetRightMotorObj();
+		mleft = MotorSingletons::GetLeftMotorObj();
+		mright =MotorSingletons::GetRightMotorObj();
 		msg = g_uartc->GetCharWithExpiration();
 		value += msg<<8;
 		msg = g_uartc->GetCharWithExpiration();
 		value += msg;
-		mleft->SetMotorSpeed(value);
-		mright->SetMotorSpeed(value);
+		mleft->SetMotorOpenLoopSpeed(value);
+		mright->SetMotorOpenLoopSpeed(value);
 		break;
 	case cmd::set_pid_param:
 		msg = g_uartc->GetCharWithExpiration();
@@ -61,6 +62,15 @@ State* IdleState::HandleCommand(uint8_t command)
 		//获取16位的pid参数
 		ac = wAngleController::GetAngleController();
 		ac->SetParameters(p,i,d);
+	case cmd::set_speed_closed_loop:
+		mleft = MotorSingletons::GetLeftMotorObj();
+		mright =MotorSingletons::GetRightMotorObj();
+		msg = g_uartc->GetCharWithExpiration();
+		value += msg<<8;
+		msg = g_uartc->GetCharWithExpiration();
+		value += msg;
+		mleft->SetMotorClosedLoopSpeed(value);
+		mright->SetMotorClosedLoopSpeed(value);
 	default:
 		break;
 	}
@@ -182,19 +192,19 @@ State* TestFTMState::HandleCommand(uint8_t command)
 		param[0] = g_uartc->GetCharWithExpiration();
 		param[1] = g_uartc->GetCharWithExpiration();
 		param_to_set = (param[0]<<8)+param[1];//构造16位频率设置(大端对齐)
-		g_steer_pwm->SetFrequency(param_to_set);
+		//功能暂时不可用
 		break;
 	case 2:         //占空比设置
 		param[0] = g_uartc->GetCharWithExpiration();
 		param[1] = g_uartc->GetCharWithExpiration();
 		param_to_set = (param[0]<<8)+param[1];//构造16位占空比设置(大端对齐)
-		g_steer_pwm->SetDutyCycle(param_to_set);
+		//g_steer_pwm->SetDutyCycle(param_to_set);
 		break;
 	case 3:         //停止输出
-		g_steer_pwm->DisablePWMOutput();
+		//g_steer_pwm->DisablePWMOutput();
 		break;
 	case 4:
-		g_steer_pwm->EnablePWMOutput();
+		//g_steer_pwm->EnablePWMOutput();
 		break;
 	default:
 		return nullptr;

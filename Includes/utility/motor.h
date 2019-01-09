@@ -20,12 +20,13 @@ class Motor
 	FlexTimerChannel *ftc;//ftm输出通道
 	uint16_t duty_cyc = 0;
 	uint16_t closed_loop_speed = 0;
-	static uint8_t cp;
-	static uint8_t ci;
-	static uint8_t cd;//闭环控制的pid参数。默认值在对应cpp文件内
+	static uint16_t cp;
+	static uint16_t ci;
+	static uint16_t cd;//闭环控制的pid参数。默认值在对应cpp文件内
 	int16_t historical_errs[6];//传感器测量到的过去几个速度值的误差，用于pid
 	int32_t historical_errs_sum = 0;//误差和，用于积分项
 public:
+	bool closed_loop_control_is_enabled = true;
 	Motor(FlexTimerModule *module,FlexTimerChannel *channel)
 	{
 		ftm = module;

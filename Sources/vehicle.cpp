@@ -18,7 +18,7 @@
 #include "communicate.h" //串口通讯需要
 #include "motor.h"
 #include "neuron.h"
-
+#include "steer.h"
 State* RunningState::HandleCommand(uint8_t command)
 {
 	switch(command)
@@ -46,9 +46,8 @@ void RunningState::StateChangeOp()
 	left->Run();
 	right->Run();
 	PeriodicInterruptTimer *pitm = wPIT::GetPitch0();
-	pitm->SetPeriod(7500);
-	g_steer_pwm->SetPWMParam(329,1000);
-	g_steer_pwm->EnablePWMOutput();
+	pitm->SetPeriod(5000);
+	SteerSingleton::GetSteerObj();//调用一下此函数，确保舵机pwm输出被正确初始化并位于中位
 }
 
 void RunningState::StateRemainOp()
@@ -60,16 +59,14 @@ void RunningState::StateRemainOp()
 	//状态保持时，如果数据已经更新，则执行控制算法
 	AngleController *angle_control = wAngleController::GetAngleController();//从单例模式处获取指针
 	uint16_t values[3];
-	for(uint8_t i=0;i<3;i++)
+	for(uint8_t i=0;i<4;i++)
 		values[i] = g_sensor->values[i];
-	int32_t duty_cyc = angle_control->DoControl(values);//调用提线算法
-	g_steer_pwm -> SetDutyCycle(duty_cyc);//设置舵机占空比
+	int32_t steer_yaw = angle_control->DoControl(values);//调用提线算法
+	SteerSingleton::GetSteerObj()->SetYaw(steer_yaw);
 
 	//下面将电感数据发送至上位机
-	for(uint8_t i=0;i<3;i++)
+	for(uint8_t i=0;i<4;i++)
 	{
-		if(i==1)
-			continue;//中间电感暂时移除
 		g_uartc->SendChar(0xFF - i);//同步字，用于上位机辨识消息
 		g_uartc->SendChar(0xFF - i);//同步字，用于上位机辨识消息
 		g_uartc->SendChar(static_cast<uint8_t>(values[i]>>8));//高八位
@@ -106,5 +103,5 @@ void RunningState::StateExitOp()
 	Motor* right = MotorSingletons::GetRightMotorObj();
 	left->Halt();
 	right->Halt();
-	g_steer_pwm -> SetDutyCycle(5000);
+	SteerSingleton::GetSteerObj()->SetYaw(0);
 }

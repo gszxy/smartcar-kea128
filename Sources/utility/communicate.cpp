@@ -87,7 +87,7 @@ void UARTCommunicator::SendChar(char send)
 
 uint8_t UARTCommunicator::GetChar()
 {
-	if((rxb_head_ptr + 1 == rxb_tail_ptr) || ((rxb_head_ptr - rxb_tail_ptr) == (rxbufferlen - 1)))//缓冲区空
+	if((rxb_head_ptr + 1 == rxb_tail_ptr) || ((rxb_head_ptr - rxb_tail_ptr) == rxbufferlen))//缓冲区空
 		return 0;
 	uint8_t recieve = *rxb_head_ptr;
 	++rxb_head_ptr;
@@ -109,7 +109,7 @@ void UARTCommunicator::CleanRxBuffer()
 /*..............中断处理函数，在发送缓冲区空时发送下一个字符.............*/
 void UARTCommunicator::OnIntrSendNext()
 {
-	if((txb_head_ptr + 1 == txb_tail_ptr) || ((txb_head_ptr - txb_tail_ptr) == (txbufferlen - 1)))//缓冲区空
+	if((txb_head_ptr + 1 == txb_tail_ptr) || ((txb_head_ptr - txb_tail_ptr) == txbufferlen))//缓冲区空
 	{
 		this->uart->DisableIntrOnTxRegEmpty();
 		return;

@@ -8,11 +8,14 @@
 
 Motor* MotorSingletons::left_motor = nullptr;
 Motor* MotorSingletons::right_motor = nullptr;
-uint8_t Motor::cp = 20000;
-uint8_t Motor::ci = 1000;
-uint8_t Motor::cd = 3000;
+uint16_t Motor::cp = 20000;
+uint16_t Motor::ci = 1000;
+uint16_t Motor::cd = 3000;
 void Motor::DoPIDSpdControl(int16_t measured_spd)
 {//增量式PID控制
+
+	if(!closed_loop_control_is_enabled)
+		return;
 	int16_t error = this->closed_loop_speed - measured_spd;
 	for(uint8_t i=1; i<6;i++)
 		this->historical_errs[i] = this->historical_errs[i-1];
@@ -26,6 +29,6 @@ void Motor::DoPIDSpdControl(int16_t measured_spd)
 		final = 0;
 	else if(final > 10000)
 		final = 10000;
-	duty_cyc = static_cats<uint16_t>(final);
+	duty_cyc = static_cast<uint16_t>(final);
 	ftc->SetDutyCycle(duty_cyc);
 }

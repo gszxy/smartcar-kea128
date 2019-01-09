@@ -18,7 +18,7 @@ private:
 public://由于中断函数的缘故，不得不把所有函数全部暴露为公有
 	   //以后考虑用单例模式的方法实现包装
 	ADCModule *adcm;                      //数组，包含各ad转换器
-	volatile uint16_t values[3] = {0,0,0};
+	volatile uint16_t values[4] = {0,0,0,0};
 	volatile bool flag_data_updated = false;
 	volatile uint8_t current_adc_m;       //正在进行转换的adc模块
 	bool sys_has_ongoing_convert = 0;
@@ -41,7 +41,7 @@ public:
 	volatile bool left_speed_is_updated = false;
 	volatile bool right_speed_is_updated = false;
 	volatile bool current_wheel_is_left_one = false;
-	WheelSpeedSensor(FlexTimerModule *module,FTMSettings::ExternalClockPin left,FTMSettings::ExternalClockPin pin_right)
+	WheelSpeedSensor(FlexTimerModule *module,FTMSettings::ExternalClockPin left,FTMSettings::ExternalClockPin right)
 	{
 		ftm = module;
 		pins[0] = left;
