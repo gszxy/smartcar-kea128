@@ -46,8 +46,8 @@ void RunningState::StateChangeOp()
 	left->Run();
 	right->Run();
 	PeriodicInterruptTimer *pitm = wPIT::GetPitch0();
-	pitm->SetPeriod(5000);
-	SteerSingleton::GetSteerObj();//调用一下此函数，确保舵机pwm输出被正确初始化并位于中位
+	pitm->SetPeriod(10000);
+	//SteerSingleton::GetSteerObj();//调用一下此函数，确保舵机pwm输出被正确初始化并位于中位
 }
 
 void RunningState::StateRemainOp()
@@ -76,23 +76,24 @@ void RunningState::StateRemainOp()
 
 	//下面开始速度闭环控制
 	auto wheels = SensorSingletons::GetWheelSpeedSensor();
-	if(wheels->left_speed_is_updated)
+	if(wheels->speed_is_updated)
 	{
 		uint16_t spd = wheels->left_wheel_spd;
 		MotorSingletons::GetLeftMotorObj()->DoPIDSpdControl(spd);
-		wheels->left_speed_is_updated = false;
-		g_uartc->SendChar(0xEF);//同步字，用于上位机辨识消息
+
+		g_uartc->SendChar(0xF0);//同步字，用于上位机辨识消息
+		g_uartc->SendChar(0xF0);//同步字，用于上位机辨识消息
 		g_uartc->SendChar(static_cast<uint8_t>(spd>>8));//高八位
 		g_uartc->SendChar(static_cast<uint8_t>(spd));//低八位
-	}
-	if(wheels->right_speed_is_updated)
-	{
-		uint16_t spd = wheels->right_wheel_spd;
+
+		 spd = wheels->right_wheel_spd;
 		MotorSingletons::GetRightMotorObj()->DoPIDSpdControl(spd);
-		wheels->right_speed_is_updated = false;
-		g_uartc->SendChar(0xEE);//同步字，用于上位机辨识消息
+		g_uartc->SendChar(0xF1);//同步字，用于上位机辨识消息
+		g_uartc->SendChar(0xF1);//同步字，用于上位机辨识消息
 		g_uartc->SendChar(static_cast<uint8_t>(spd>>8));//高八位
 		g_uartc->SendChar(static_cast<uint8_t>(spd));//低八位
+
+		wheels->speed_is_updated = false;
 	}
 
 }

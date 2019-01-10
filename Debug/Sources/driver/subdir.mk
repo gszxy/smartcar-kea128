@@ -8,6 +8,7 @@ CPP_SRCS += \
 ../Sources/driver/adc.cpp \
 ../Sources/driver/ftm.cpp \
 ../Sources/driver/gpio.cpp \
+../Sources/driver/kbi.cpp \
 ../Sources/driver/pit.cpp 
 
 OBJS += \
@@ -15,6 +16,7 @@ OBJS += \
 ./Sources/driver/adc.o \
 ./Sources/driver/ftm.o \
 ./Sources/driver/gpio.o \
+./Sources/driver/kbi.o \
 ./Sources/driver/pit.o 
 
 CPP_DEPS += \
@@ -22,6 +24,7 @@ CPP_DEPS += \
 ./Sources/driver/adc.d \
 ./Sources/driver/ftm.d \
 ./Sources/driver/gpio.d \
+./Sources/driver/kbi.d \
 ./Sources/driver/pit.d 
 
 

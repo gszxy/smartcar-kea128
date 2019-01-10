@@ -10,11 +10,15 @@
 #include "glb_var.h"
 #include "SKEAZ1284.h"
 #include "ftm.h"
-
+#include "kbi.h"
+#include "gpio.h"
 using namespace std;
 
 InductorSensor *SensorSingletons::inductors = nullptr;
 WheelSpeedSensor *SensorSingletons::wheels = nullptr;
+
+//本文件内的全局变量
+volatile uint16_t encoder_count[2] = {0,0};
 
 
 InductorSensor::InductorSensor()
@@ -44,7 +48,13 @@ void InductorSensor::StartConvert()
 
 
 
-
+void WheelSpeedSensor::GetAndClearCount()
+{
+	this->left_wheel_spd = encoder_count[0];
+	this->right_wheel_spd = encoder_count[1];
+	encoder_count[0]=encoder_count[1]=0;
+	this->speed_is_updated = true;
+}
 
 
 
@@ -56,14 +66,8 @@ volatile void __attribute__((interrupt ("IRQ"))) PIT_CH0_IRQHandler()
 	if(counter == 1)
 	{
 		SensorSingletons::GetWheelSpeedSensor()->GetAndClearCount();
-		SensorSingletons::GetWheelSpeedSensor()->LeftStart();
 	}
-	else if(counter == 3)
-	{
-		SensorSingletons::GetWheelSpeedSensor()->GetAndClearCount();
-		SensorSingletons::GetWheelSpeedSensor()->RightStart();
-	}
-	else if(counter == 4)
+	else if(counter == 10)
 		counter = 0;
 
 
@@ -72,6 +76,20 @@ volatile void __attribute__((interrupt ("IRQ"))) PIT_CH0_IRQHandler()
 	PIT->CHANNEL[0].TFLG  |= PIT_TFLG_TIF_MASK;
 	PIT->CHANNEL[1].TFLG  |= PIT_TFLG_TIF_MASK;
 	//清标志位，否则中断会不断触发
+}
+
+volatile void __attribute__((interrupt ("IRQ"))) KBI0_IRQHandler()
+{
+		++encoder_count[0];
+	KBIx[KBIX0]->SC |= (KBI_SC_KBACK_MASK | KBI_SC_RSTKBSP_MASK | KBI_SC_KBIE_MASK | KBI_SC_KBSPEN_MASK);
+	KBIx[KBIX0]->PE |= (1 << PTn(SensorSingletons::GetWheelSpeedSensor()->left_pin));
+
+}
+volatile void __attribute__((interrupt ("IRQ"))) KBI1_IRQHandler()
+{
+	++encoder_count[1];
+	KBIx[KBIX1]->SC |= (KBI_SC_KBACK_MASK | KBI_SC_RSTKBSP_MASK | KBI_SC_KBIE_MASK | KBI_SC_KBSPEN_MASK);
+	KBIx[KBIX1]->PE |= (1 << PTn(SensorSingletons::GetWheelSpeedSensor()->right_pin));
 }
 /*
 volatile void __attribute__((interrupt ("IRQ"))) ADC_IRQHandler()
