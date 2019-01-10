@@ -117,12 +117,13 @@ void FlexTimerChannel::SetDutyCycle(uint16_t duty_cyc)
 FlexTimerChannel::FlexTimerChannel(FlexTimerModule *module,FTMSettings::Channels channel_no,FTMSettings::PortRemapType port_remap_type)
 {
 	FTMSettings::Modules modno = module->GetModuleNo();
-	  this->PinSet(modno,channel,port_remap_type);
+	  this->PinSet(modno,channel_no,port_remap_type);
 	  //调用函数设置对应的通道和引脚
-	  FTMx[modno]->CONTROLS[channel].CnSC = 0 ;
+	  FTMx[modno]->CONTROLS[channel_no].CnSC = 0 ;
 	  //清空模块和通道的寄存器，即重置整个通道功能
 	  //将模块和通道信息保存至成员变量
-	  this->channel = channel;
+	  this->channel = channel_no;
+	  this->module = module;
 }
 
 

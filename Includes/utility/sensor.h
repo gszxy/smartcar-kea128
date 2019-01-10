@@ -104,7 +104,7 @@ public:
 	static inline WheelSpeedSensor* GetWheelSpeedSensor()
 	{
 		if(wheels == nullptr)
-			InducInit();
+			WheelInit();
 		return wheels;
 	}
 };

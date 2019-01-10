@@ -81,7 +81,8 @@ State* TestUARTState::HandleCommand(uint8_t command)
 {
 	if(command == cmd::stop_force)//仅当命令为强制停止（0）时，程序可以退出串口测试状态。否则将收到的数据原样发还给上位机
 		return new IdleState();
-	g_uartc->SendChar(command);
+	if(command != 0)
+		g_uartc->SendChar(command);
 	//注:g前缀是统一定义在glb_var.h内的全局变量
 	return nullptr;
 }

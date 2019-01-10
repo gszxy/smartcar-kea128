@@ -63,13 +63,10 @@ void UARTCommunicator::SendString(char *buffer,uint8_t length/*长度包括终�
 	for(uint8_t i = 0; i < length; i++)
 	{
 		this->uart->DisableIntrOnTxRegEmpty();
-		if(txb_tail_ptr - txbuffer == 0)
-			*(txbuffer + txbufferlen - 1) = buffer[i];
-		else
-			*(txb_tail_ptr - 1) = buffer[i];
-
 		++txb_tail_ptr;
-		if(txb_tail_ptr - txbuffer >= (txbufferlen + 1))//尾指针超出缓冲区末尾
+		*(txb_tail_ptr - 1) = buffer[i];
+
+		if(txb_tail_ptr - txbuffer >= txbufferlen)//尾指针超出缓冲区末尾
 			txb_tail_ptr = txbuffer;
 		if(txb_tail_ptr == txb_head_ptr)
 			++txb_head_ptr;
@@ -87,7 +84,7 @@ void UARTCommunicator::SendChar(char send)
 
 uint8_t UARTCommunicator::GetChar()
 {
-	if((rxb_head_ptr + 1 == rxb_tail_ptr) || ((rxb_head_ptr - rxb_tail_ptr) == rxbufferlen))//缓冲区空
+	if(rxb_head_ptr == rxb_tail_ptr)//缓冲区空
 		return 0;
 	uint8_t recieve = *rxb_head_ptr;
 	++rxb_head_ptr;
@@ -109,23 +106,23 @@ void UARTCommunicator::CleanRxBuffer()
 /*..............中断处理函数，在发送缓冲区空时发送下一个字符.............*/
 void UARTCommunicator::OnIntrSendNext()
 {
-	if((txb_head_ptr + 1 == txb_tail_ptr) || ((txb_head_ptr - txb_tail_ptr) == txbufferlen))//缓冲区空
+	if(txb_head_ptr == txb_tail_ptr)//缓冲区空
 	{
 		this->uart->DisableIntrOnTxRegEmpty();
 		return;
 	}
 	this->uart->SendChar(*txb_head_ptr);
 	++txb_head_ptr;
-	if(txb_head_ptr - txbuffer >= txbufferlen)//指针超出缓冲区末尾
+	if(txb_head_ptr - txbuffer >= txbufferlen )//指针超出缓冲区末尾
 		txb_head_ptr = txbuffer;
 	this->uart->EnableIntrOnTxRegEmpty();
 }
 /*..............中断处理函数，在接收缓冲区满时读取下一个字符.............*/
 void UARTCommunicator::OnIntrRecieveNext()
 {
-	*(rxb_tail_ptr - 1) = this->uart->RecieveChar();
 	++rxb_tail_ptr;
-	if(rxb_tail_ptr - rxbuffer >= (rxbufferlen + 1) )//尾指针超出缓冲区末尾
+	*(rxb_tail_ptr - 1) = this->uart->RecieveChar();
+	if(rxb_tail_ptr - rxbuffer >= rxbufferlen  )//尾指针超出缓冲区末尾
 		rxb_tail_ptr = rxbuffer;
 	if(rxb_tail_ptr == rxb_head_ptr)//缓冲区满
 		++rxb_head_ptr;

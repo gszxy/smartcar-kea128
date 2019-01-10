@@ -95,6 +95,10 @@ public:
 		FTMx[this->module]->CNT = 0;
 		//向计数器内写入任意值，重置为CNTIN中给定的初始值。修改0为其他数不能改变计数器初值！
 	}
+	inline uint16_t GetFrequency()
+	{
+		return this->frequency;
+	}
 	inline void SetExternalClockSource(FTMSettings::ExternalClockPin clock_pin)
 	{
 		SIM->PINSEL &= ~SIM_PINSEL_FTM0CLKPS_MASK;    //清除外部时钟引脚选择
